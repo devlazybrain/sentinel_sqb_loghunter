@@ -1,0 +1,20 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+
+# Large data files
+*.log
+
+# Generated reports
+attack_report.csv
+
+# OS
+.DS_Store
+Thumbs.db
+
+
+web_attack_logs.txt
