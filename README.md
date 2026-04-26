@@ -1,4 +1,6 @@
-# SQB Mobile Internet-Banking — Cyberattack Analyzer
+# sentinel_sqb_loghunter — SQB Mobile Internet-Banking Cyberattack Analyzer
+
+Log analyzer (Nginx and Backend) for SQB bank for cyber attacks.
 
 Nginx + backend log fayllarni tahlil qilib, **3 ta asosiy hujum** turini avtomatik aniqlovchi va hisobot yaratuvchi tizim:
 
@@ -44,7 +46,7 @@ Har bir IP bir necha layer'da flag bo'lishi mumkin. **2+ layer = HIGH confidence
 ## Loyiha strukturasi
 
 ```
-haskers/
+sentinel_sqb_loghunter/
 ├── data/
 │   ├── input/           # log fayllar
 │   └── output/          # generatsiya qilingan hisobotlar
