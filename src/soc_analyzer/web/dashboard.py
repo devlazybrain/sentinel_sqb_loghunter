@@ -23,7 +23,7 @@ from soc_analyzer.analysis.severity_reason import explain_score
 from soc_analyzer.i18n import t, severity_label, attack_type_label, LANGUAGES
 from soc_analyzer.utils.formatters import format_bytes, format_duration
 from soc_analyzer.web import ip_actions
-from soc_analyzer.web.theme import get_theme_css
+from soc_analyzer.web.theme import get_theme_css, get_plotly_layout, get_plotly_layout_no_axes
 from soc_analyzer.config.endpoint_store import (
     load_custom, add_endpoint, remove_endpoint,
     get_defaults, get_merged, CATEGORY_LABELS,
@@ -88,10 +88,31 @@ def main():
     st.caption(t("app_subtitle", lang))
 
     # ====== LOG FAYLNI YUKLASH ======
-    if uploaded:
-        log_path = ROOT / "data" / "input" / "_uploaded.txt"
-        log_path.write_bytes(uploaded.read())
+    # Track log source in session_state so language/theme changes don't reset the app
+    if uploaded is not None:
+        file_key = f"{uploaded.name}_{uploaded.size}"
+        if st.session_state.get("_file_key") != file_key:
+            log_path = ROOT / "data" / "input" / "_uploaded.txt"
+            log_path.write_bytes(uploaded.read())
+            st.session_state["_file_key"] = file_key
+            st.session_state["_log_source"] = "uploaded"
+            st.session_state.pop("_cached_df", None)
+            st.session_state.pop("_cached_result", None)
+        else:
+            st.session_state["_log_source"] = "uploaded"
     elif use_default:
+        if st.session_state.get("_file_key") != "default":
+            st.session_state["_file_key"] = "default"
+            st.session_state["_log_source"] = "default"
+            st.session_state.pop("_cached_df", None)
+            st.session_state.pop("_cached_result", None)
+        else:
+            st.session_state["_log_source"] = "default"
+
+    log_source = st.session_state.get("_log_source")
+    if log_source == "uploaded":
+        log_path = ROOT / "data" / "input" / "_uploaded.txt"
+    elif log_source == "default":
         log_path = ROOT / "data" / "input" / "web_attack_logs.txt"
         if not log_path.exists():
             st.error(t("default_not_found", lang) + f": {log_path}")
@@ -100,9 +121,15 @@ def main():
         st.info(t("upload_or_default", lang))
         st.stop()
 
-    with st.spinner(t("analyzing", lang)):
-        df = parse_log(log_path)
-        result = AnalysisEngine().analyze(df)
+    if "_cached_result" not in st.session_state:
+        with st.spinner(t("analyzing", lang)):
+            df = parse_log(log_path)
+            result = AnalysisEngine().analyze(df)
+            st.session_state["_cached_df"] = df
+            st.session_state["_cached_result"] = result
+    else:
+        df = st.session_state["_cached_df"]
+        result = st.session_state["_cached_result"]
 
     # ====== TOP METRIKALAR ======
     total_exfil_bytes = sum(s.total_bytes for s in result.sessions
@@ -130,11 +157,11 @@ def main():
         "⚙️ Endpoints",
     ])
 
-    with tab1: _render_attacks(result, df, lang)
+    with tab1: _render_attacks(result, df, lang, theme)
     with tab2: _render_chains(result, lang)
-    with tab3: _render_reputation(result, lang)
-    with tab4: _render_statistics(result, lang)
-    with tab5: _render_charts(result, df, lang)
+    with tab3: _render_reputation(result, lang, theme)
+    with tab4: _render_statistics(result, lang, theme)
+    with tab5: _render_charts(result, df, lang, theme)
     with tab6: _render_admin_actions(lang)
     with tab7: _render_endpoints()
 
@@ -174,23 +201,22 @@ def _session_payloads(session) -> list[str]:
     return ev.get("sample_payloads", [])
 
 
-def _render_attacks(result, df, lang):
+def _render_attacks(result, df, lang, theme="dark"):
     if not result.sessions:
         st.subheader(t("attacks_header", lang))
         st.info(t("no_attacks", lang))
         return
 
-    # ===== HEADER + DOWNLOAD TOOLBAR (yuqorida o'ngda) =====
+    # ===== HEADER + DOWNLOAD SLOTS =====
     h1, h2 = st.columns([3, 2])
     with h1:
         st.subheader(t("attacks_header", lang))
     with h2:
-        # Download tugmalari shu yerda — kichik, simmetrik
         d1, d2 = st.columns(2)
         download_csv_slot = d1.empty()
         download_json_slot = d2.empty()
 
-    # ===== FILTERLAR — 4 ta teng kenglikda =====
+    # ===== FILTERS =====
     f1, f2, f3, f4 = st.columns(4)
     with f1:
         all_severities = ["CRITICAL", "HIGH", "MEDIUM", "LOW"]
@@ -221,7 +247,7 @@ def _render_attacks(result, df, lang):
     with f4:
         show_internal = st.checkbox(t("show_internal", lang), value=True, key="flt_int")
 
-    # ===== FILTER QO'LLASH =====
+    # ===== APPLY FILTERS =====
     sessions = result.sessions
     sessions = [s for s in sessions if s.severity in sev_filter]
     sessions = [s for s in sessions if s.attack_type in type_filter]
@@ -238,48 +264,56 @@ def _render_attacks(result, df, lang):
 
     sessions = sorted(sessions, key=lambda x: -x.score)
 
-    # ===== JADVAL VA IP DETAIL =====
-    left, right = st.columns([3, 2], gap="medium")
+    # ===== BUILD TABLE ROWS =====
+    rows = []
+    for s in sessions:
+        action = ip_actions.get_action(s.ip.split(",")[0].strip())
+        action_icon = {"watchlist": "👁", "ignore": "🔇", "block": "⛔"}.get(action or "", "")
+        anon_badge = "🧅 TOR" if s.via_tor else ("🔀 Proxy" if s.via_proxy else "")
+        rot_badge = "🔄" if s.ip_rotation_detected else ""
+        endpoints = _session_endpoints(s)
+        payloads = _session_payloads(s)
+        payload_str = payloads[0][:80] if payloads else ""
+        rows.append({
+            t("col_severity", lang):     f"{severity_label(s.severity, lang)} ({s.score})",
+            t("col_attack_type", lang):  attack_type_label(s.attack_type, lang),
+            t("col_ip", lang):           f"{action_icon} {s.ip}".strip(),
+            "🌍":                         s.country,
+            "Anonymizer":                anon_badge,
+            "🔄":                         rot_badge,
+            t("col_internal", lang):     "✓" if s.is_internal else "",
+            t("col_start", lang):        _fmt_dt(s.start_time),
+            t("col_end", lang):          _fmt_dt(s.end_time),
+            t("col_duration", lang):     format_duration(s.duration_seconds, lang),
+            t("col_requests", lang):     f"{s.request_count:,}",
+            "Endpoint":                  endpoints,
+            "Payload":                   payload_str,
+            t("col_bytes", lang):        f"{s.total_bytes:,}",
+        })
+    table = pd.DataFrame(rows)
+    sev_col = t("col_severity", lang)
 
-    with left:
-        rows = []
-        for s in sessions:
-            action = ip_actions.get_action(s.ip.split(",")[0].strip())
-            action_icon = {"watchlist": "👁", "ignore": "🔇", "block": "⛔"}.get(action or "", "")
-            anon_badge = "🧅 TOR" if s.via_tor else ("🔀 Proxy" if s.via_proxy else "")
-            rot_badge = "🔄" if s.ip_rotation_detected else ""
-            endpoints = _session_endpoints(s)
-            payloads = _session_payloads(s)
-            payload_str = payloads[0][:80] if payloads else ""
-            rows.append({
-                t("col_severity", lang):     f"{severity_label(s.severity, lang)} ({s.score})",
-                t("col_attack_type", lang):  attack_type_label(s.attack_type, lang),
-                t("col_ip", lang):           f"{action_icon} {s.ip}".strip(),
-                "🌍":                         s.country,
-                "Anonymizer":                anon_badge,
-                "🔄":                         rot_badge,
-                t("col_internal", lang):     "✓" if s.is_internal else "",
-                t("col_start", lang):        _fmt_dt(s.start_time),
-                t("col_end", lang):          _fmt_dt(s.end_time),
-                t("col_duration", lang):     format_duration(s.duration_seconds, lang),
-                t("col_requests", lang):     f"{s.request_count:,}",
-                "Endpoint":                  endpoints,
-                "Payload":                   payload_str,
-                t("col_bytes", lang):        f"{s.total_bytes:,}",
-            })
-        table = pd.DataFrame(rows)
-        sev_col = t("col_severity", lang)
+    def style_severity(val):
+        for sev_key, color in SEVERITY_COLORS.items():
+            if val.startswith(severity_label(sev_key, lang)):
+                return f"background-color: {color}; color: white; font-weight: bold;"
+        return ""
 
-        def style_severity(val):
-            for sev_key, color in SEVERITY_COLORS.items():
-                if val.startswith(severity_label(sev_key, lang)):
-                    return f"background-color: {color}; color: white; font-weight: bold;"
-            return ""
+    # ===== LAYOUT: full-width OR table+panel side by side =====
+    # _panel_ip is set from the previous rerun; layout is decided before rendering
+    panel_ip = st.session_state.get("_panel_ip")
 
+    if panel_ip:
+        table_col, detail_col = st.columns([6, 4], gap="medium")
+    else:
+        table_col = st.container()
+        detail_col = None
+
+    with table_col:
         event = st.dataframe(
             table.style.map(style_severity, subset=[sev_col]),
             use_container_width=True,
-            height=560,
+            height=520,
             hide_index=True,
             on_select="rerun",
             selection_mode="single-row",
@@ -287,42 +321,43 @@ def _render_attacks(result, df, lang):
         )
         st.caption(f"📊 {len(sessions)} / {len(result.sessions)}")
 
-        # Download tugmalarini header'dagi slotlarga joylashtiramiz
         csv_buf = io.StringIO()
         table.to_csv(csv_buf, index=False, encoding="utf-8-sig")
         download_csv_slot.download_button(
-            "⬇ CSV", csv_buf.getvalue(),
-            "attacks.csv", "text/csv",
+            "⬇ CSV", csv_buf.getvalue(), "attacks.csv", "text/csv",
             use_container_width=True,
         )
         json_data = json.dumps([s.to_dict() for s in sessions], indent=2,
                                default=str, ensure_ascii=False)
         download_json_slot.download_button(
-            "⬇ JSON", json_data,
-            "attacks.json", "application/json",
+            "⬇ JSON", json_data, "attacks.json", "application/json",
             use_container_width=True,
         )
 
-    with right:
-        selected_idx = None
-        if event and event.selection and event.selection.rows:
-            selected_idx = event.selection.rows[0]
+    # ===== PROCESS CLICK: open or switch panel =====
+    if event and event.selection and event.selection.rows:
+        idx = event.selection.rows[0]
+        if idx < len(sessions):
+            new_ip = sessions[idx].ip.split(",")[0].strip()
+            if new_ip != panel_ip:
+                # New IP selected — store and rerun to apply two-column layout
+                st.session_state["_panel_ip"] = new_ip
+                st.rerun()
 
-        if selected_idx is None:
-            st.markdown(
-                f"<div style='padding:20px; text-align:center; "
-                f"border:2px dashed var(--border, #444); border-radius:12px; "
-                f"min-height:560px; display:flex; align-items:center; "
-                f"justify-content:center; flex-direction:column;'>"
-                f"<h2 style='margin:0; opacity:0.4;'>👆</h2>"
-                f"<p style='opacity:0.6; margin-top:10px;'>{t('select_ip_hint', lang)}</p>"
-                f"</div>",
-                unsafe_allow_html=True,
-            )
-        else:
-            selected_session = sessions[selected_idx]
-            selected_ip = selected_session.ip.split(",")[0].strip()
-            _render_ip_detail(selected_ip, result, df, lang)
+    # ===== RIGHT PANEL =====
+    if panel_ip and detail_col is not None:
+        with detail_col:
+            # Panel header: IP + close button
+            ph_l, ph_r = st.columns([5, 1])
+            with ph_l:
+                st.markdown(f"#### 🔍 {panel_ip}")
+            with ph_r:
+                if st.button("✕", key="close_panel", use_container_width=True):
+                    st.session_state.pop("_panel_ip", None)
+                    st.session_state.pop("attacks_table", None)
+                    st.rerun()
+            st.divider()
+            _render_ip_detail(panel_ip, result, df, lang, theme)
 
 
 # ============================================================
@@ -367,7 +402,7 @@ def _render_chains(result, lang):
 # ============================================================
 # TAB: IP REPUTATION
 # ============================================================
-def _render_reputation(result, lang):
+def _render_reputation(result, lang, theme="dark"):
     st.subheader(t("reputation_header", lang))
     rows = []
     for r in sorted(result.reputation.values(), key=lambda x: -x.score):
@@ -384,7 +419,6 @@ def _render_reputation(result, lang):
         return
 
     sev_col = t("col_severity", lang)
-
     def style_sev(val):
         for sev_key, color in SEVERITY_COLORS.items():
             if val.startswith(severity_label(sev_key, lang)):
@@ -402,35 +436,48 @@ def _render_reputation(result, lang):
 # ============================================================
 # TAB: STATISTIKA — oddiy user vs hujumchi profili
 # ============================================================
-def _render_statistics(result, lang):
+def _render_statistics(result, lang, theme="dark"):
     st.subheader(t("stats_header", lang))
     base = getattr(result, "baseline", None) or {}
     normal = base.get("normal", {})
     attacker = base.get("attacker", {})
 
     # ============== YUQORIDA — 2 KATTA SUMMARY KARTOCHKA ==============
+    if theme == "light":
+        card_normal_bg  = "#e8f5e9"
+        card_attack_bg  = "#fdecea"
+        card_normal_txt = "#1b5e20"
+        card_attack_txt = "#7f0000"
+        fg_sub = "#555"
+    else:
+        card_normal_bg  = "#1f4d2a"
+        card_attack_bg  = "#5c1a1a"
+        card_normal_txt = "#2ca02c"
+        card_attack_txt = "#ff6b6b"
+        fg_sub = "#bbb"
+
     c1, c2 = st.columns(2, gap="medium")
     with c1:
         st.markdown(
-            f"<div style='background:#1f4d2a; padding:16px; border-radius:10px; "
+            f"<div style='background:{card_normal_bg}; padding:16px; border-radius:10px; "
             f"border-left:6px solid #2ca02c;'>"
-            f"<h3 style='color:#fff; margin:0;'>🟢 {t('stats_normal_user', lang)}</h3>"
-            f"<p style='color:#e0e0e0; margin:4px 0 8px 0; font-size:13px;'>"
+            f"<h3 style='color:{card_normal_txt}; margin:0;'>🟢 {t('stats_normal_user', lang)}</h3>"
+            f"<p style='color:{fg_sub}; margin:4px 0 8px 0; font-size:13px;'>"
             f"{t('stats_summary_innocent', lang)}</p>"
-            f"<h1 style='color:#2ca02c; margin:0;'>{base.get('normal_ip_count', 0)}</h1>"
-            f"<p style='color:#bbb; margin:0; font-size:12px;'>{t('stats_ip_count', lang)}</p>"
+            f"<h1 style='color:{card_normal_txt}; margin:0;'>{base.get('normal_ip_count', 0)}</h1>"
+            f"<p style='color:{fg_sub}; margin:0; font-size:12px;'>{t('stats_ip_count', lang)}</p>"
             f"</div>",
             unsafe_allow_html=True,
         )
     with c2:
         st.markdown(
-            f"<div style='background:#5c1a1a; padding:16px; border-radius:10px; "
+            f"<div style='background:{card_attack_bg}; padding:16px; border-radius:10px; "
             f"border-left:6px solid #d62728;'>"
-            f"<h3 style='color:#fff; margin:0;'>🔴 {t('stats_attacker', lang)}</h3>"
-            f"<p style='color:#e0e0e0; margin:4px 0 8px 0; font-size:13px;'>"
+            f"<h3 style='color:{card_attack_txt}; margin:0;'>🔴 {t('stats_attacker', lang)}</h3>"
+            f"<p style='color:{fg_sub}; margin:4px 0 8px 0; font-size:13px;'>"
             f"{t('stats_summary_attacker', lang)}</p>"
-            f"<h1 style='color:#ff6b6b; margin:0;'>{base.get('attacker_ip_count', 0)}</h1>"
-            f"<p style='color:#bbb; margin:0; font-size:12px;'>{t('stats_ip_count', lang)}</p>"
+            f"<h1 style='color:{card_attack_txt}; margin:0;'>{base.get('attacker_ip_count', 0)}</h1>"
+            f"<p style='color:{fg_sub}; margin:0; font-size:12px;'>{t('stats_ip_count', lang)}</p>"
             f"</div>",
             unsafe_allow_html=True,
         )
@@ -448,6 +495,7 @@ def _render_statistics(result, lang):
             color="#2ca02c",
             empty_msg=t("stats_no_innocents", lang),
             lang=lang,
+            theme=theme,
         )
 
     with col_attacker:
@@ -458,11 +506,12 @@ def _render_statistics(result, lang):
             color="#d62728",
             empty_msg=t("stats_no_attackers", lang),
             lang=lang,
+            theme=theme,
         )
 
 
 def _render_group_block(profile: dict, ip_list: list, title: str, color: str,
-                        empty_msg: str, lang: str):
+                        empty_msg: str, lang: str, theme: str = "dark"):
     """Bitta guruh (shubhasiz yoki hujumchi) uchun barcha statistika."""
     st.markdown(f"### {title}")
 
@@ -491,8 +540,10 @@ def _render_group_block(profile: dict, ip_list: list, title: str, color: str,
         ndf = pd.DataFrame([{"Endpoint": k, "Count": v} for k, v in eps])
         fig = px.bar(ndf, x="Count", y="Endpoint", orientation="h",
                      color_discrete_sequence=[color])
+        pl = get_plotly_layout_no_axes(theme)
         fig.update_layout(height=260, margin=dict(l=0, r=0, t=10, b=0),
-                          showlegend=False, yaxis=dict(autorange="reversed"))
+                          showlegend=False, yaxis=dict(autorange="reversed"),
+                          **pl)
         st.plotly_chart(fig, use_container_width=True)
 
     # User-Agent
@@ -511,9 +562,11 @@ def _render_group_block(profile: dict, ip_list: list, title: str, color: str,
 # ============================================================
 # TAB: GRAFIKLAR
 # ============================================================
-def _render_charts(result, df, lang):
+def _render_charts(result, df, lang, theme="dark"):
     if df.empty:
         return
+
+    pl = get_plotly_layout(theme)
 
     # Timeline (Gantt)
     st.markdown(f"### ⏱ {t('chart_timeline', lang)}")
@@ -531,14 +584,14 @@ def _render_charts(result, df, lang):
         fig = px.timeline(gdf, x_start="Start", x_end="Finish", y="IP",
                           color="Type", hover_data=["Severity"])
         fig.update_yaxes(autorange="reversed")
-        fig.update_layout(height=500)
+        fig.update_layout(height=500, **pl)
         st.plotly_chart(fig, use_container_width=True)
 
     # Soatlik faollik
     st.markdown(f"### 📊 {t('chart_hourly', lang)}")
     by_hour = df.groupby("hour_local").size().reset_index(name="count")
     fig = px.bar(by_hour, x="hour_local", y="count")
-    fig.update_layout(height=350)
+    fig.update_layout(height=350, **pl)
     st.plotly_chart(fig, use_container_width=True)
 
     # Top IP'lar
@@ -551,14 +604,14 @@ def _render_charts(result, df, lang):
     by_ip["volume"] = by_ip["bytes"].apply(format_bytes)
     fig = px.bar(by_ip, x="ip", y="bytes", color="requests",
                  hover_data=["volume"])
-    fig.update_layout(height=400)
+    fig.update_layout(height=400, **pl)
     st.plotly_chart(fig, use_container_width=True)
 
 
 # ============================================================
 # IP DETAIL PANEL — o'ng tomonda chiqadi
 # ============================================================
-def _render_ip_detail(ip: str, result, df, lang):
+def _render_ip_detail(ip: str, result, df, lang, theme="dark"):
     rep = result.reputation.get(ip)
 
     # ===== HEADER KARTOCHKASI =====
@@ -569,74 +622,78 @@ def _render_ip_detail(ip: str, result, df, lang):
     action_emoji = {"watchlist": "👁", "ignore": "🔇", "block": "⛔"}.get(current_action or "", "")
     action_label = t(f"action_{current_action}", lang) if current_action else t("no_action", lang)
 
+    card_bg  = f"linear-gradient(135deg, {sev_color}18 0%, {'#f8f9fa' if theme == 'light' else '#1a1d24'} 100%)"
+    text_col = "#111827" if theme == "light" else "#e6e6e6"
+    sub_col  = "#6b7280" if theme == "light" else "#a0a4ad"
+    border   = "#e5e7eb" if theme == "light" else "transparent"
+
     st.markdown(
         f"""
-        <div style='background: linear-gradient(135deg, {sev_color}22 0%, transparent 100%);
+        <div style='background: {card_bg};
                     border-left: 4px solid {sev_color};
+                    border: 1px solid {border};
                     padding: 14px 18px; border-radius: 10px; margin-bottom: 14px;'>
             <div style='display:flex; justify-content:space-between; align-items:center; gap:8px;'>
                 <div>
-                    <div style='font-size:11px; opacity:0.7; letter-spacing:0.5px;'>IP</div>
-                    <div style='font-family:monospace; font-size:18px; font-weight:600;'>{ip}</div>
+                    <div style='font-size:11px; color:{sub_col}; letter-spacing:0.5px;'>IP</div>
+                    <div style='font-family:monospace; font-size:18px; font-weight:600; color:{text_col};'>{ip}</div>
                 </div>
                 <span style='background:{sev_color}; color:white; padding:6px 14px;
                              border-radius:20px; font-size:13px; font-weight:600;
                              white-space:nowrap;'>{sev_text} · {score}</span>
             </div>
-            <div style='margin-top:10px; font-size:13px; opacity:0.8;'>
-                {action_emoji} <strong>{t('action_status', lang)}:</strong> {action_label}
+            <div style='margin-top:10px; font-size:13px; color:{sub_col};'>
+                {action_emoji} <strong style='color:{text_col};'>{t('action_status', lang)}:</strong> {action_label}
             </div>
         </div>
         """,
         unsafe_allow_html=True,
     )
 
-    # ===== ACTIONS — kichik, kompakt tugmalar =====
-    a1, a2, a3, a4 = st.columns(4)
-    if a1.button("👁", key=f"w_{ip}", use_container_width=True,
-                 help=t("action_watchlist", lang)):
+    # ===== ACTIONS — 2x2 compact buttons =====
+    a1, a2 = st.columns(2)
+    if a1.button(f"👁 {t('action_watchlist', lang)}", key=f"w_{ip}", use_container_width=True):
         ip_actions.set_action(ip, "watchlist"); st.rerun()
-    if a2.button("🔇", key=f"i_{ip}", use_container_width=True,
-                 help=t("action_ignore", lang)):
+    if a2.button(f"🔇 {t('action_ignore', lang)}", key=f"i_{ip}", use_container_width=True):
         ip_actions.set_action(ip, "ignore"); st.rerun()
-    if a3.button("⛔", key=f"b_{ip}", use_container_width=True,
-                 help=t("action_block", lang)):
+    a3, a4 = st.columns(2)
+    if a3.button(f"⛔ {t('action_block', lang)}", key=f"b_{ip}", use_container_width=True):
         ip_actions.set_action(ip, "block"); st.rerun()
-    if a4.button("✕", key=f"c_{ip}", use_container_width=True,
-                 help=t("action_clear", lang)):
+    if a4.button(f"✕ {t('action_clear', lang)}", key=f"c_{ip}", use_container_width=True):
         ip_actions.clear_action(ip); st.rerun()
 
     # === GeoIP + Anonymizer badges ===
     ip_sessions = [s for s in result.sessions if ip in s.ip.split(",")]
     if ip_sessions:
         primary_session = ip_sessions[0]
-        badge_cols = st.columns(4)
+        b1, b2 = st.columns(2)
         country = primary_session.country
         if country and country != "Unknown":
-            badge_cols[0].info(f"🌍 **{country}**")
+            b1.info(f"🌍 **{country}**")
         if primary_session.via_tor:
-            badge_cols[1].error("🧅 **TOR EXIT NODE**")
+            b2.error("🧅 **TOR EXIT NODE**")
         elif primary_session.via_proxy:
-            badge_cols[1].warning("🔀 **PROXY**")
+            b2.warning("🔀 **PROXY**")
         if primary_session.ip_rotation_detected:
-            badge_cols[2].warning("🔄 **IP ROTATION / VPN**")
+            st.warning("🔄 **IP Rotation / VPN**")
         if primary_session.coordinated and primary_session.shared_user_agent:
-            badge_cols[3].error("🤝 **Koordinatsiyali**")
-            st.warning(f"🤝 **Koordinatsiyali hujum** — ortaq UA: `{primary_session.shared_user_agent}`")
+            st.error(f"🤝 **Koordinatsiyali** — UA: `{primary_session.shared_user_agent}`")
 
     g = df[df["ip"] == ip]
     if g.empty:
         return
 
-    # === Asosiy ma'lumot ===
-    c1, c2, c3 = st.columns(3)
-    c1.metric(t("total_in_log", lang), f"{len(g):,}")
-    c2.metric(t("data_stolen", lang), f"{int(g['bytes'].sum()):,} bayt")
+    # === Asosiy ma'lumot — 2 columns to fit narrow panel ===
+    total_bytes = int(g["bytes"].sum())
     span = (g["timestamp"].max() - g["timestamp"].min()).total_seconds()
-    c3.metric(t("col_duration", lang), format_duration(span, lang))
+
+    c1, c2 = st.columns(2)
+    c1.metric(t("total_in_log", lang), f"{len(g):,}")
+    c2.metric(t("data_stolen", lang), format_bytes(total_bytes))
+    st.metric(t("col_duration", lang), format_duration(span, lang))
 
     st.caption(
-        f"⏱ {t('first_request', lang)}: `{_fmt_dt(g['timestamp'].min(), '%Y-%m-%d %H:%M:%S')}`  ·  "
+        f"⏱ {t('first_request', lang)}: `{_fmt_dt(g['timestamp'].min(), '%Y-%m-%d %H:%M:%S')}`  \n"
         f"{t('last_request', lang)}: `{_fmt_dt(g['timestamp'].max(), '%Y-%m-%d %H:%M:%S')}` (UTC+5 Toshkent)"
     )
 
@@ -696,7 +753,8 @@ def _render_ip_detail(ip: str, result, df, lang):
         hourly = g.groupby("hour_local").size().reset_index(name="count")
         hourly.columns = ["hour", "count"]
         fig = px.bar(hourly, x="hour", y="count")
-        fig.update_layout(height=200, margin=dict(l=0, r=0, t=0, b=0))
+        fig.update_layout(height=200, margin=dict(l=0, r=0, t=0, b=0),
+                          **get_plotly_layout(theme))
         st.plotly_chart(fig, use_container_width=True)
 
     # === Oddiy bilan taqqoslash (Task 11) ===

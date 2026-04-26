@@ -1,0 +1,40 @@
+======================================================================
+  HUJUM ZANJIRI — SQB Mobile Internet-Banking
+======================================================================
+  [09:00:01] anonymizer                               | 185.23.44.12                     | 386 reqs | 1.1 MB [Poland]
+  [09:00:02] anonymizer                               | 77.88.99.11                      | 334 reqs [Norway]
+  [09:00:09] anonymizer                               | 62.122.55.90                     | 373 reqs | 1.0 MB [Russia]
+  [09:00:12] anonymizer                               | 198.51.100.20                    | 368 reqs | 1.1 MB
+  [09:00:15] anonymizer                               | 145.67.23.11                     | 383 reqs | 1.1 MB [Netherlands]
+  [09:00:19] anonymizer                               | 91.199.12.77                     | 407 reqs | 96.2 MB [Poland]
+  [09:00:19] distributed_fingerprint                  | 10.0.0.5, 91.199.12.77           | 797 reqs | 97.4 MB
+  [09:00:21] anonymizer                               | 10.0.1.14                        | 382 reqs | 1.1 MB
+  [09:00:23] data_exfiltration                        | 91.199.12.77                     | 53 reqs | 95.2 MB [Poland]
+  [09:00:31] anonymizer                               | 10.0.0.5                         | 390 reqs | 1.1 MB
+  [09:00:44] anonymizer                               | 176.88.14.201                    | 363 reqs | 1.0 MB [Türkiye]
+  [09:01:09] anonymizer                               | 203.0.113.45                     | 364 reqs | 1.0 MB
+  [09:01:17] anonymizer                               | 103.44.55.66                     | 316 reqs [India]
+  [09:01:20] anonymizer                               | 93.184.216.34                    | 387 reqs | 1.2 MB [United States]
+  [09:01:59] credential_stuffing                      | 185.23.44.12                     | 45 reqs [Poland]
+  [09:55:00] distributed_credential_stuffing          | 103.44.55.66, 185.23.44.12, 198.51.100.20, 93.184.216.34 | 5 reqs [IP ROTATION] [India]
+  [10:00:00] distributed_credential_stuffing          | 145.67.23.11, 185.23.44.12, 198.51.100.20 | 21 reqs [IP ROTATION] [Netherlands]
+  [10:02:04] sql_injection                            | 91.199.12.77                     | 6 reqs [Poland]
+  [10:02:25] admin_recon                              | 91.199.12.77                     | 10 reqs [Poland]
+  [10:03:05] admin_recon                              | 10.0.0.5                         | 9 reqs
+  [10:03:17] anonymizer                               | 10.0.2.33                        | 194 reqs
+  [10:03:17] admin_recon                              | 10.0.2.33                        | 8 reqs
+  [10:03:25] anonymizer                               | 10.0.3.77                        | 194 reqs
+  [10:03:25] admin_recon                              | 10.0.3.77                        | 15 reqs
+  [10:04:43] admin_recon                              | 176.88.14.201                    | 14 reqs [Türkiye]
+  [10:04:57] admin_recon                              | 203.0.113.45                     | 9 reqs
+  [10:05:04] admin_recon                              | 77.88.99.11                      | 13 reqs [Norway]
+  [10:05:33] admin_recon                              | 93.184.216.34                    | 9 reqs [United States]
+  [10:06:01] admin_recon                              | 10.0.1.14                        | 13 reqs
+  [10:06:27] admin_recon                              | 145.67.23.11                     | 16 reqs [Netherlands]
+  [10:07:17] admin_recon                              | 198.51.100.20                    | 11 reqs
+  [10:08:07] admin_recon                              | 62.122.55.90                     | 10 reqs [Russia]
+  [10:08:53] admin_recon                              | 103.44.55.66                     | 8 reqs [India]
+  [10:13:33] admin_recon                              | 185.23.44.12                     | 8 reqs [Poland]
+  [10:40:00] distributed_credential_stuffing          | 103.44.55.66, 145.67.23.11, 176.88.14.201, 185.23.44.12, 203.0.113.45 | 7 reqs [IP ROTATION] [India]
+
+  Zanjir: anonymizer (09:00) -> anonymizer (09:00) -> anonymizer (09:00) -> anonymizer (09:00) -> anonymizer (09:00) -> anonymizer (09:00) -> distributed_fingerprint (09:00) -> anonymizer (09:00) -> data_exfiltration (09:00) -> anonymizer (09:00) -> anonymizer (09:00) -> anonymizer (09:01) -> anonymizer (09:01) -> anonymizer (09:01) -> credential_stuffing (09:01) -> distributed_credential_stuffing (09:55) -> distributed_credential_stuffing (10:00) -> sql_injection (10:02) -> admin_recon (10:02) -> admin_recon (10:03) -> anonymizer (10:03) -> admin_recon (10:03) -> anonymizer (10:03) -> admin_recon (10:03) -> admin_recon (10:04) -> admin_recon (10:04) -> admin_recon (10:05) -> admin_recon (10:05) -> admin_recon (10:06) -> admin_recon (10:06) -> admin_recon (10:07) -> admin_recon (10:08) -> admin_recon (10:08) -> admin_recon (10:13) -> distributed_credential_stuffing (10:40)

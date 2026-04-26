@@ -35,22 +35,60 @@ DARK_VARS = {
 }
 
 LIGHT_VARS = {
-    "bg":              "#fafafa",
-    "bg_secondary":    "#f1f3f5",
+    "bg":              "#f0f2f6",
+    "bg_secondary":    "#e4e7ed",
     "bg_card":         "#ffffff",
-    "bg_hover":        "#e9ecef",
-    "border":          "#dee2e6",
-    "fg":              "#1a1a1a",
-    "fg_secondary":    "#495057",
-    "fg_muted":        "#868e96",
+    "bg_hover":        "#dde1e8",
+    "border":          "#c8cdd6",
+    "fg":              "#111827",
+    "fg_secondary":    "#374151",
+    "fg_muted":        "#6b7280",
     "accent":          "#dc2626",
     "accent_hover":    "#b91c1c",
     "success":         "#16a34a",
     "warning":         "#d97706",
     "info":            "#2563eb",
-    "shadow":          "0 2px 8px rgba(0,0,0,0.08)",
-    "shadow_hover":    "0 4px 16px rgba(0,0,0,0.12)",
+    "shadow":          "0 2px 8px rgba(0,0,0,0.10)",
+    "shadow_hover":    "0 4px 16px rgba(0,0,0,0.16)",
 }
+
+# Plotly chart layout kwargs per theme
+PLOTLY_THEME = {
+    "dark": {
+        "paper_bgcolor": "#1e2129",
+        "plot_bgcolor":  "#1e2129",
+        "font_color":    "#e6e6e6",
+        "gridcolor":     "#2d3139",
+    },
+    "light": {
+        "paper_bgcolor": "#ffffff",
+        "plot_bgcolor":  "#f8f9fa",
+        "font_color":    "#111827",
+        "gridcolor":     "#dee2e6",
+    },
+}
+
+
+def get_plotly_layout(theme: str) -> dict:
+    t = PLOTLY_THEME.get(theme, PLOTLY_THEME["dark"])
+    return dict(
+        paper_bgcolor=t["paper_bgcolor"],
+        plot_bgcolor=t["plot_bgcolor"],
+        font=dict(color=t["font_color"]),
+        xaxis=dict(gridcolor=t["gridcolor"], linecolor=t["gridcolor"]),
+        yaxis=dict(gridcolor=t["gridcolor"], linecolor=t["gridcolor"]),
+    )
+
+
+def get_plotly_layout_no_axes(theme: str) -> dict:
+    """Same as get_plotly_layout but without xaxis/yaxis — use when the
+    caller sets its own yaxis/xaxis kwargs to avoid duplicate keyword errors."""
+    t = PLOTLY_THEME.get(theme, PLOTLY_THEME["dark"])
+    return dict(
+        paper_bgcolor=t["paper_bgcolor"],
+        plot_bgcolor=t["plot_bgcolor"],
+        font=dict(color=t["font_color"]),
+    )
 
 
 BASE_CSS = """
@@ -223,8 +261,16 @@ BASE_CSS = """
     }}
 
     /* ============ MULTISELECT ============ */
-    .stMultiSelect [data-baseweb="select"] {{
+    .stMultiSelect [data-baseweb="select"],
+    .stMultiSelect [data-baseweb="select"] > div,
+    .stMultiSelect [class*="valueContainer"],
+    .stMultiSelect [class*="placeholder"],
+    .stMultiSelect [data-baseweb="select"] input {{
         background-color: {bg_card} !important;
+        color: {fg} !important;
+        border-color: {border} !important;
+    }}
+    .stMultiSelect [data-baseweb="select"] {{
         border: 1px solid {border} !important;
         border-radius: 8px !important;
     }}
@@ -239,12 +285,29 @@ BASE_CSS = """
     .stMultiSelect [data-baseweb="tag"] svg {{
         fill: white !important;
     }}
+    .stMultiSelect [data-baseweb="select"] svg {{
+        fill: {fg_secondary} !important;
+    }}
 
     /* ============ SELECTBOX ============ */
-    .stSelectbox [data-baseweb="select"] {{
+    .stSelectbox [data-baseweb="select"],
+    .stSelectbox [data-baseweb="select"] > div,
+    .stSelectbox [data-baseweb="select"] [data-baseweb="select-control"],
+    .stSelectbox [class*="valueContainer"],
+    .stSelectbox [class*="singleValue"],
+    .stSelectbox [class*="placeholder"],
+    .stSelectbox [class*="indicatorContainer"],
+    .stSelectbox [data-baseweb="select"] input {{
         background-color: {bg_card} !important;
+        color: {fg} !important;
+        border-color: {border} !important;
+    }}
+    .stSelectbox [data-baseweb="select"] {{
         border: 1px solid {border} !important;
         border-radius: 8px !important;
+    }}
+    .stSelectbox [data-baseweb="select"] svg {{
+        fill: {fg_secondary} !important;
     }}
 
     /* ============ RADIO ============ */
@@ -277,8 +340,23 @@ BASE_CSS = """
     [data-testid="stFileUploader"]:hover {{
         border-color: {accent} !important;
     }}
-    [data-testid="stFileUploader"] section {{
-        background-color: transparent !important;
+    [data-testid="stFileUploader"] section,
+    [data-testid="stFileUploader"] > div,
+    [data-testid="stFileUploaderDropzone"],
+    [data-testid="stFileUploaderDropzone"] > div {{
+        background-color: {bg_card} !important;
+        color: {fg} !important;
+    }}
+    [data-testid="stFileUploader"] button,
+    [data-testid="stFileUploaderDropzone"] button {{
+        background-color: {bg_secondary} !important;
+        color: {fg} !important;
+        border: 1px solid {border} !important;
+        border-radius: 6px !important;
+    }}
+    [data-testid="stFileUploader"] small,
+    [data-testid="stFileUploader"] span {{
+        color: {fg_muted} !important;
     }}
 
     /* ============ EXPANDER ============ */
@@ -289,12 +367,15 @@ BASE_CSS = """
         margin-bottom: 8px !important;
         box-shadow: {shadow};
     }}
-    [data-testid="stExpander"] details summary {{
+    [data-testid="stExpander"] details summary,
+    [data-testid="stExpander"] > div > div > div > button {{
+        background-color: {bg_card} !important;
         color: {fg} !important;
         font-weight: 500 !important;
         padding: 12px 16px !important;
     }}
-    [data-testid="stExpander"] details summary:hover {{
+    [data-testid="stExpander"] details summary:hover,
+    [data-testid="stExpander"] > div > div > div > button:hover {{
         background-color: {bg_hover} !important;
     }}
     [data-testid="stExpander"] * {{
@@ -365,6 +446,26 @@ BASE_CSS = """
     div[data-testid="column"] > div[data-testid="stDownloadButton"] > button {{
         padding: 6px 14px !important;
         font-size: 13px !important;
+    }}
+
+    /* ============ SELECTBOX / DROPDOWN MENU ============ */
+    [data-baseweb="popover"] [data-baseweb="menu"] {{
+        background-color: {bg_card} !important;
+        border: 1px solid {border} !important;
+    }}
+    [data-baseweb="popover"] [role="option"] {{
+        color: {fg} !important;
+        background-color: {bg_card} !important;
+    }}
+    [data-baseweb="popover"] [role="option"]:hover {{
+        background-color: {bg_hover} !important;
+    }}
+
+    /* ============ CODE BLOCKS ============ */
+    .stCodeBlock, pre, code {{
+        background-color: {bg_secondary} !important;
+        color: {fg} !important;
+        border: 1px solid {border} !important;
     }}
 </style>
 """

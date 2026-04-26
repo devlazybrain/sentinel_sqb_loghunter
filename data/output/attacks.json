@@ -15,10 +15,119 @@
       "successful_logins": 16,
       "failure_ratio": 0.622,
       "unique_user_agents": 7,
-      "bot_ua_used": true
+      "bot_ua_used": true,
+      "endpoints_targeted": {
+        "/login": 45
+      },
+      "sample_payloads": [
+        "Mozilla/5.0_(Macintosh;_Intel_Mac_OS_X_10_15_7)",
+        "PostmanRuntime/7.39.0",
+        "Mozilla/5.0_(iPhone;_CPU_iPhone_OS_18_0_like_Mac_OS_X)",
+        "python-requests/2.31.0",
+        "Mozilla/5.0"
+      ]
     },
     "score": 330,
-    "severity": "HIGH"
+    "severity": "HIGH",
+    "country": "Poland",
+    "via_tor": false,
+    "via_proxy": false,
+    "ip_rotation_detected": false,
+    "coordinated": false,
+    "shared_user_agent": null
+  },
+  {
+    "attack_type": "distributed_credential_stuffing",
+    "ip": "103.44.55.66, 185.23.44.12, 198.51.100.20, 93.184.216.34",
+    "start_time": "2026-04-01T09:55:00+00:00",
+    "end_time": "2026-04-01T10:00:00+00:00",
+    "duration_seconds": 300.0,
+    "request_count": 5,
+    "total_bytes": 2306,
+    "layer": "L1_burst",
+    "is_internal": false,
+    "mitre_id": "T1110.004",
+    "evidence": {
+      "involved_ips": [
+        "103.44.55.66",
+        "93.184.216.34",
+        "185.23.44.12",
+        "198.51.100.20"
+      ],
+      "unique_ip_count": 4,
+      "coordinated": true,
+      "shared_user_agent": "Mozilla/5.0_(Windows_NT_10.0;_Win64;_x64)"
+    },
+    "score": 230,
+    "severity": "HIGH",
+    "country": "India",
+    "via_tor": false,
+    "via_proxy": false,
+    "ip_rotation_detected": true,
+    "coordinated": true,
+    "shared_user_agent": "Mozilla/5.0_(Windows_NT_10.0;_Win64;_x64)"
+  },
+  {
+    "attack_type": "distributed_credential_stuffing",
+    "ip": "145.67.23.11, 185.23.44.12, 198.51.100.20",
+    "start_time": "2026-04-01T10:00:00+00:00",
+    "end_time": "2026-04-01T10:05:00+00:00",
+    "duration_seconds": 300.0,
+    "request_count": 21,
+    "total_bytes": 5895,
+    "layer": "L1_burst",
+    "is_internal": false,
+    "mitre_id": "T1110.004",
+    "evidence": {
+      "involved_ips": [
+        "185.23.44.12",
+        "198.51.100.20",
+        "145.67.23.11"
+      ],
+      "unique_ip_count": 3,
+      "coordinated": true,
+      "shared_user_agent": "Mozilla/5.0"
+    },
+    "score": 273,
+    "severity": "HIGH",
+    "country": "Netherlands",
+    "via_tor": false,
+    "via_proxy": false,
+    "ip_rotation_detected": true,
+    "coordinated": true,
+    "shared_user_agent": "Mozilla/5.0"
+  },
+  {
+    "attack_type": "distributed_credential_stuffing",
+    "ip": "103.44.55.66, 145.67.23.11, 176.88.14.201, 185.23.44.12, 203.0.113.45",
+    "start_time": "2026-04-01T10:40:00+00:00",
+    "end_time": "2026-04-01T10:45:00+00:00",
+    "duration_seconds": 300.0,
+    "request_count": 7,
+    "total_bytes": 3595,
+    "layer": "L1_burst",
+    "is_internal": false,
+    "mitre_id": "T1110.004",
+    "evidence": {
+      "involved_ips": [
+        "103.44.55.66",
+        "185.23.44.12",
+        "176.88.14.201",
+        "145.67.23.11",
+        "203.0.113.45"
+      ],
+      "unique_ip_count": 5,
+      "coordinated": true,
+      "shared_user_agent": "Mozilla/5.0_(Windows_NT_10.0;_Win64;_x64)"
+    },
+    "score": 230,
+    "severity": "HIGH",
+    "country": "India",
+    "via_tor": false,
+    "via_proxy": false,
+    "ip_rotation_detected": true,
+    "coordinated": true,
+    "shared_user_agent": "Mozilla/5.0_(Windows_NT_10.0;_Win64;_x64)"
   },
   {
     "attack_type": "sql_injection",
@@ -34,7 +143,7 @@
     "evidence": {
       "payload_count": 6,
       "successful_responses": 2,
-      "targeted_endpoints": {
+      "endpoints_targeted": {
         "/api/accounts": 3,
         "/api/report": 2,
         "/api/search": 1
@@ -52,7 +161,13 @@
       "uses_sqlmap": true
     },
     "score": 1341,
-    "severity": "CRITICAL"
+    "severity": "CRITICAL",
+    "country": "Poland",
+    "via_tor": false,
+    "via_proxy": false,
+    "ip_rotation_detected": false,
+    "coordinated": false,
+    "shared_user_agent": null
   },
   {
     "attack_type": "data_exfiltration",
@@ -75,10 +190,23 @@
       },
       "max_single_response_bytes": 52428800,
       "avg_response_bytes": 1883843,
-      "estimated_records": 195007
+      "estimated_records": 195007,
+      "sample_payloads": [
+        "/api/accounts?id=101",
+        "/api/accounts?id=101",
+        "/api/accounts?id=101",
+        "/api/transactions?limit=20",
+        "/api/transactions?limit=20"
+      ]
     },
     "score": 1341,
-    "severity": "CRITICAL"
+    "severity": "CRITICAL",
+    "country": "Poland",
+    "via_tor": false,
+    "via_proxy": false,
+    "ip_rotation_detected": false,
+    "coordinated": false,
+    "shared_user_agent": null
   },
   {
     "attack_type": "anonymizer",
@@ -105,10 +233,23 @@
         "Mozilla/5.0": 86,
         "Mozilla/5.0_(Windows_NT_10.0;_Win64;_x64)": 74,
         "Mozilla/5.0_(Macintosh;_Intel_Mac_OS_X_10_15_7)": 68
+      },
+      "endpoints_targeted": {
+        "/login": 52,
+        "/api/accounts": 33,
+        "/api/profile": 30,
+        "/cards": 29,
+        "/payments": 29
       }
     },
     "score": 271,
-    "severity": "HIGH"
+    "severity": "HIGH",
+    "country": "Unknown",
+    "via_tor": false,
+    "via_proxy": false,
+    "ip_rotation_detected": false,
+    "coordinated": false,
+    "shared_user_agent": null
   },
   {
     "attack_type": "anonymizer",
@@ -135,10 +276,23 @@
         "Mozilla/5.0_(iPhone;_CPU_iPhone_OS_18_0_like_Mac_OS_X)": 87,
         "PostmanRuntime/7.39.0": 80,
         "Mozilla/5.0_(Macintosh;_Intel_Mac_OS_X_10_15_7)": 72
+      },
+      "endpoints_targeted": {
+        "/login": 61,
+        "/api/accounts": 33,
+        "/payments": 29,
+        "/help": 28,
+        "/": 28
       }
     },
     "score": 271,
-    "severity": "HIGH"
+    "severity": "HIGH",
+    "country": "Unknown",
+    "via_tor": false,
+    "via_proxy": false,
+    "ip_rotation_detected": false,
+    "coordinated": false,
+    "shared_user_agent": null
   },
   {
     "attack_type": "anonymizer",
@@ -165,10 +319,23 @@
         "Mozilla/5.0_(iPhone;_CPU_iPhone_OS_18_0_like_Mac_OS_X)": 40,
         "PostmanRuntime/7.39.0": 36,
         "Mozilla/5.0": 31
+      },
+      "endpoints_targeted": {
+        "/": 20,
+        "/help": 17,
+        "/payments": 16,
+        "/login": 16,
+        "/api/export": 15
       }
     },
     "score": 190,
-    "severity": "MEDIUM"
+    "severity": "MEDIUM",
+    "country": "Unknown",
+    "via_tor": false,
+    "via_proxy": false,
+    "ip_rotation_detected": false,
+    "coordinated": false,
+    "shared_user_agent": null
   },
   {
     "attack_type": "anonymizer",
@@ -195,10 +362,23 @@
         "Mozilla/5.0_(iPhone;_CPU_iPhone_OS_18_0_like_Mac_OS_X)": 47,
         "Mozilla/5.0_(Macintosh;_Intel_Mac_OS_X_10_15_7)": 37,
         "Mozilla/5.0_(Windows_NT_10.0;_Win64;_x64)": 31
+      },
+      "endpoints_targeted": {
+        "/login": 20,
+        "/api/export": 19,
+        "/admin": 14,
+        "/api/transactions": 14,
+        "/payments": 13
       }
     },
     "score": 248,
-    "severity": "HIGH"
+    "severity": "HIGH",
+    "country": "Unknown",
+    "via_tor": false,
+    "via_proxy": false,
+    "ip_rotation_detected": false,
+    "coordinated": false,
+    "shared_user_agent": null
   },
   {
     "attack_type": "anonymizer",
@@ -225,10 +405,23 @@
         "Mozilla/5.0_(Macintosh;_Intel_Mac_OS_X_10_15_7)": 69,
         "PostmanRuntime/7.39.0": 63,
         "Mozilla/5.0_(Windows_NT_10.0;_Win64;_x64)": 56
+      },
+      "endpoints_targeted": {
+        "/login": 48,
+        "/api/profile": 32,
+        "/api/transactions": 27,
+        "/payments": 26,
+        "/dashboard": 24
       }
     },
     "score": 230,
-    "severity": "HIGH"
+    "severity": "HIGH",
+    "country": "India",
+    "via_tor": false,
+    "via_proxy": false,
+    "ip_rotation_detected": false,
+    "coordinated": false,
+    "shared_user_agent": null
   },
   {
     "attack_type": "anonymizer",
@@ -255,10 +448,23 @@
         "PostmanRuntime/7.39.0": 79,
         "Mozilla/5.0_(Macintosh;_Intel_Mac_OS_X_10_15_7)": 74,
         "Mozilla/5.0_(Windows_NT_10.0;_Win64;_x64)": 70
+      },
+      "endpoints_targeted": {
+        "/login": 49,
+        "/help": 33,
+        "/api/accounts": 28,
+        "/": 27,
+        "/cards": 25
       }
     },
     "score": 273,
-    "severity": "HIGH"
+    "severity": "HIGH",
+    "country": "Netherlands",
+    "via_tor": false,
+    "via_proxy": false,
+    "ip_rotation_detected": false,
+    "coordinated": false,
+    "shared_user_agent": null
   },
   {
     "attack_type": "anonymizer",
@@ -285,10 +491,23 @@
         "Mozilla/5.0_(iPhone;_CPU_iPhone_OS_18_0_like_Mac_OS_X)": 74,
         "Mozilla/5.0": 72,
         "PostmanRuntime/7.39.0": 68
+      },
+      "endpoints_targeted": {
+        "/login": 52,
+        "/api/transactions": 35,
+        "/cards": 27,
+        "/accounts": 26,
+        "/dashboard": 26
       }
     },
     "score": 275,
-    "severity": "HIGH"
+    "severity": "HIGH",
+    "country": "Türkiye",
+    "via_tor": false,
+    "via_proxy": false,
+    "ip_rotation_detected": false,
+    "coordinated": false,
+    "shared_user_agent": null
   },
   {
     "attack_type": "anonymizer",
@@ -315,10 +534,23 @@
         "PostmanRuntime/7.39.0": 73,
         "Mozilla/5.0": 72,
         "Mozilla/5.0_(iPhone;_CPU_iPhone_OS_18_0_like_Mac_OS_X)": 70
+      },
+      "endpoints_targeted": {
+        "/login": 61,
+        "/accounts": 38,
+        "/": 27,
+        "/api/transactions": 26,
+        "/api/accounts": 25
       }
     },
     "score": 330,
-    "severity": "HIGH"
+    "severity": "HIGH",
+    "country": "Poland",
+    "via_tor": false,
+    "via_proxy": false,
+    "ip_rotation_detected": false,
+    "coordinated": false,
+    "shared_user_agent": null
   },
   {
     "attack_type": "anonymizer",
@@ -345,10 +577,23 @@
         "Mozilla/5.0_(Windows_NT_10.0;_Win64;_x64)": 82,
         "Mozilla/5.0_(Macintosh;_Intel_Mac_OS_X_10_15_7)": 67,
         "Mozilla/5.0": 65
+      },
+      "endpoints_targeted": {
+        "/login": 44,
+        "/api/transactions": 32,
+        "/api/accounts": 30,
+        "/": 27,
+        "/dashboard": 27
       }
     },
     "score": 250,
-    "severity": "HIGH"
+    "severity": "HIGH",
+    "country": "Unknown",
+    "via_tor": false,
+    "via_proxy": false,
+    "ip_rotation_detected": false,
+    "coordinated": false,
+    "shared_user_agent": null
   },
   {
     "attack_type": "anonymizer",
@@ -375,10 +620,23 @@
         "Mozilla/5.0": 72,
         "Mozilla/5.0_(iPhone;_CPU_iPhone_OS_18_0_like_Mac_OS_X)": 69,
         "PostmanRuntime/7.39.0": 69
+      },
+      "endpoints_targeted": {
+        "/login": 37,
+        "/dashboard": 33,
+        "/accounts": 29,
+        "/cards": 27,
+        "/help": 26
       }
     },
     "score": 210,
-    "severity": "HIGH"
+    "severity": "HIGH",
+    "country": "Unknown",
+    "via_tor": false,
+    "via_proxy": false,
+    "ip_rotation_detected": false,
+    "coordinated": false,
+    "shared_user_agent": null
   },
   {
     "attack_type": "anonymizer",
@@ -405,10 +663,23 @@
         "Mozilla/5.0_(Windows_NT_10.0;_Win64;_x64)": 78,
         "Mozilla/5.0": 78,
         "Mozilla/5.0_(Macintosh;_Intel_Mac_OS_X_10_15_7)": 73
+      },
+      "endpoints_targeted": {
+        "/login": 53,
+        "/payments": 35,
+        "/dashboard": 29,
+        "/help": 27,
+        "/accounts": 25
       }
     },
     "score": 216,
-    "severity": "HIGH"
+    "severity": "HIGH",
+    "country": "Russia",
+    "via_tor": false,
+    "via_proxy": false,
+    "ip_rotation_detected": false,
+    "coordinated": false,
+    "shared_user_agent": null
   },
   {
     "attack_type": "anonymizer",
@@ -435,10 +706,23 @@
         "Mozilla/5.0_(Windows_NT_10.0;_Win64;_x64)": 70,
         "PostmanRuntime/7.39.0": 66,
         "Mozilla/5.0": 66
+      },
+      "endpoints_targeted": {
+        "/login": 39,
+        "/dashboard": 25,
+        "/api/transactions": 25,
+        "/accounts": 23,
+        "/api/profile": 22
       }
     },
     "score": 226,
-    "severity": "HIGH"
+    "severity": "HIGH",
+    "country": "Norway",
+    "via_tor": false,
+    "via_proxy": false,
+    "ip_rotation_detected": false,
+    "coordinated": false,
+    "shared_user_agent": null
   },
   {
     "attack_type": "anonymizer",
@@ -465,10 +749,23 @@
         "Mozilla/5.0": 82,
         "PostmanRuntime/7.39.0": 79,
         "Mozilla/5.0_(Windows_NT_10.0;_Win64;_x64)": 71
+      },
+      "endpoints_targeted": {
+        "/login": 56,
+        "/api/profile": 39,
+        "/api/accounts": 38,
+        "/payments": 28,
+        "/cards": 27
       }
     },
     "score": 1341,
-    "severity": "CRITICAL"
+    "severity": "CRITICAL",
+    "country": "Poland",
+    "via_tor": false,
+    "via_proxy": false,
+    "ip_rotation_detected": false,
+    "coordinated": false,
+    "shared_user_agent": null
   },
   {
     "attack_type": "anonymizer",
@@ -495,10 +792,23 @@
         "Mozilla/5.0_(iPhone;_CPU_iPhone_OS_18_0_like_Mac_OS_X)": 77,
         "Mozilla/5.0_(Windows_NT_10.0;_Win64;_x64)": 77,
         "PostmanRuntime/7.39.0": 71
+      },
+      "endpoints_targeted": {
+        "/login": 62,
+        "/dashboard": 37,
+        "/api/transactions": 31,
+        "/help": 28,
+        "/accounts": 26
       }
     },
     "score": 237,
-    "severity": "HIGH"
+    "severity": "HIGH",
+    "country": "United States",
+    "via_tor": false,
+    "via_proxy": false,
+    "ip_rotation_detected": false,
+    "coordinated": false,
+    "shared_user_agent": null
   },
   {
     "attack_type": "admin_recon",
@@ -525,7 +835,13 @@
       ]
     },
     "score": 271,
-    "severity": "HIGH"
+    "severity": "HIGH",
+    "country": "Unknown",
+    "via_tor": false,
+    "via_proxy": false,
+    "ip_rotation_detected": false,
+    "coordinated": false,
+    "shared_user_agent": null
   },
   {
     "attack_type": "admin_recon",
@@ -551,7 +867,13 @@
       ]
     },
     "score": 271,
-    "severity": "HIGH"
+    "severity": "HIGH",
+    "country": "Unknown",
+    "via_tor": false,
+    "via_proxy": false,
+    "ip_rotation_detected": false,
+    "coordinated": false,
+    "shared_user_agent": null
   },
   {
     "attack_type": "admin_recon",
@@ -578,7 +900,13 @@
       ]
     },
     "score": 190,
-    "severity": "MEDIUM"
+    "severity": "MEDIUM",
+    "country": "Unknown",
+    "via_tor": false,
+    "via_proxy": false,
+    "ip_rotation_detected": false,
+    "coordinated": false,
+    "shared_user_agent": null
   },
   {
     "attack_type": "admin_recon",
@@ -605,7 +933,13 @@
       ]
     },
     "score": 248,
-    "severity": "HIGH"
+    "severity": "HIGH",
+    "country": "Unknown",
+    "via_tor": false,
+    "via_proxy": false,
+    "ip_rotation_detected": false,
+    "coordinated": false,
+    "shared_user_agent": null
   },
   {
     "attack_type": "admin_recon",
@@ -631,7 +965,13 @@
       ]
     },
     "score": 230,
-    "severity": "HIGH"
+    "severity": "HIGH",
+    "country": "India",
+    "via_tor": false,
+    "via_proxy": false,
+    "ip_rotation_detected": false,
+    "coordinated": false,
+    "shared_user_agent": null
   },
   {
     "attack_type": "admin_recon",
@@ -657,7 +997,13 @@
       ]
     },
     "score": 273,
-    "severity": "HIGH"
+    "severity": "HIGH",
+    "country": "Netherlands",
+    "via_tor": false,
+    "via_proxy": false,
+    "ip_rotation_detected": false,
+    "coordinated": false,
+    "shared_user_agent": null
   },
   {
     "attack_type": "admin_recon",
@@ -683,7 +1029,13 @@
       ]
     },
     "score": 275,
-    "severity": "HIGH"
+    "severity": "HIGH",
+    "country": "Türkiye",
+    "via_tor": false,
+    "via_proxy": false,
+    "ip_rotation_detected": false,
+    "coordinated": false,
+    "shared_user_agent": null
   },
   {
     "attack_type": "admin_recon",
@@ -709,7 +1061,13 @@
       ]
     },
     "score": 330,
-    "severity": "HIGH"
+    "severity": "HIGH",
+    "country": "Poland",
+    "via_tor": false,
+    "via_proxy": false,
+    "ip_rotation_detected": false,
+    "coordinated": false,
+    "shared_user_agent": null
   },
   {
     "attack_type": "admin_recon",
@@ -735,7 +1093,13 @@
       ]
     },
     "score": 250,
-    "severity": "HIGH"
+    "severity": "HIGH",
+    "country": "Unknown",
+    "via_tor": false,
+    "via_proxy": false,
+    "ip_rotation_detected": false,
+    "coordinated": false,
+    "shared_user_agent": null
   },
   {
     "attack_type": "admin_recon",
@@ -761,7 +1125,13 @@
       ]
     },
     "score": 210,
-    "severity": "HIGH"
+    "severity": "HIGH",
+    "country": "Unknown",
+    "via_tor": false,
+    "via_proxy": false,
+    "ip_rotation_detected": false,
+    "coordinated": false,
+    "shared_user_agent": null
   },
   {
     "attack_type": "admin_recon",
@@ -787,7 +1157,13 @@
       ]
     },
     "score": 216,
-    "severity": "HIGH"
+    "severity": "HIGH",
+    "country": "Russia",
+    "via_tor": false,
+    "via_proxy": false,
+    "ip_rotation_detected": false,
+    "coordinated": false,
+    "shared_user_agent": null
   },
   {
     "attack_type": "admin_recon",
@@ -813,7 +1189,13 @@
       ]
     },
     "score": 226,
-    "severity": "HIGH"
+    "severity": "HIGH",
+    "country": "Norway",
+    "via_tor": false,
+    "via_proxy": false,
+    "ip_rotation_detected": false,
+    "coordinated": false,
+    "shared_user_agent": null
   },
   {
     "attack_type": "admin_recon",
@@ -839,7 +1221,13 @@
       ]
     },
     "score": 1341,
-    "severity": "CRITICAL"
+    "severity": "CRITICAL",
+    "country": "Poland",
+    "via_tor": false,
+    "via_proxy": false,
+    "ip_rotation_detected": false,
+    "coordinated": false,
+    "shared_user_agent": null
   },
   {
     "attack_type": "admin_recon",
@@ -865,7 +1253,13 @@
       ]
     },
     "score": 237,
-    "severity": "HIGH"
+    "severity": "HIGH",
+    "country": "United States",
+    "via_tor": false,
+    "via_proxy": false,
+    "ip_rotation_detected": false,
+    "coordinated": false,
+    "shared_user_agent": null
   },
   {
     "attack_type": "distributed_fingerprint",
@@ -895,6 +1289,12 @@
       "rhythm_class": "normal"
     },
     "score": 271,
-    "severity": "HIGH"
+    "severity": "HIGH",
+    "country": "Unknown",
+    "via_tor": false,
+    "via_proxy": false,
+    "ip_rotation_detected": false,
+    "coordinated": false,
+    "shared_user_agent": null
   }
 ]
