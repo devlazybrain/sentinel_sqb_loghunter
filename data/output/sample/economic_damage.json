@@ -1,0 +1,12 @@
+{
+  "estimated_records": 421280,
+  "exfil_bytes": 215695375,
+  "exfil_mb": 215.7,
+  "dark_market_loss_usd": 2106400,
+  "compliance_fine_usd": 21064000,
+  "reputation_loss_usd": 46340800,
+  "fraud_potential_usd": 0,
+  "suspicious_transfers": 0,
+  "total_loss_usd": 69511200,
+  "total_loss_uzs": 879316680000
+}

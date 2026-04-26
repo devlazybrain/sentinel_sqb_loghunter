@@ -1,0 +1,15 @@
+[theme]
+# Foydalanuvchi yuqori-o'ng burchakdagi "Settings" menyusidan
+# Light / Dark mavzularini tanlay oladi.
+base = "dark"
+primaryColor = "#d62728"
+backgroundColor = "#0e1117"
+secondaryBackgroundColor = "#262730"
+textColor = "#fafafa"
+
+[server]
+headless = true
+port = 8501
+
+[browser]
+gatherUsageStats = false

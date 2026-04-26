@@ -1,0 +1,900 @@
+[
+  {
+    "attack_type": "credential_stuffing",
+    "ip": "185.23.44.12",
+    "start_time": "2026-04-01T09:01:59+00:00",
+    "end_time": "2026-04-01T11:15:58+00:00",
+    "duration_seconds": 8039.0,
+    "request_count": 45,
+    "total_bytes": 22399,
+    "layer": "L1_burst",
+    "is_internal": false,
+    "mitre_id": "T1110.004",
+    "evidence": {
+      "failed_logins": 28,
+      "successful_logins": 16,
+      "failure_ratio": 0.622,
+      "unique_user_agents": 7,
+      "bot_ua_used": true
+    },
+    "score": 330,
+    "severity": "HIGH"
+  },
+  {
+    "attack_type": "sql_injection",
+    "ip": "91.199.12.77",
+    "start_time": "2026-04-01T10:02:04+00:00",
+    "end_time": "2026-04-01T10:02:20+00:00",
+    "duration_seconds": 16.0,
+    "request_count": 6,
+    "total_bytes": 54312,
+    "layer": "L1_burst",
+    "is_internal": false,
+    "mitre_id": "T1190",
+    "evidence": {
+      "payload_count": 6,
+      "successful_responses": 2,
+      "targeted_endpoints": {
+        "/api/accounts": 3,
+        "/api/report": 2,
+        "/api/search": 1
+      },
+      "sample_payloads": [
+        "id=1%20OR%201=1",
+        "id=1%20UNION%20SELECT%20password%20FROM%20users",
+        "id=1%27%20OR%20%271%27=%271",
+        "q=test%27%20UNION%20SELECT%20card_no,cvv%20FROM%20cards--",
+        "acct=1001%20UNION%20SELECT%20name,balance%20FROM%20accounts"
+      ],
+      "user_agents": [
+        "sqlmap/1.7.2#stable"
+      ],
+      "uses_sqlmap": true
+    },
+    "score": 1341,
+    "severity": "CRITICAL"
+  },
+  {
+    "attack_type": "data_exfiltration",
+    "ip": "91.199.12.77",
+    "start_time": "2026-04-01T09:00:23+00:00",
+    "end_time": "2026-04-01T11:48:20+00:00",
+    "duration_seconds": 10077.0,
+    "request_count": 53,
+    "total_bytes": 99843681,
+    "layer": "L1_burst",
+    "is_internal": false,
+    "mitre_id": "T1041",
+    "evidence": {
+      "endpoints_targeted": {
+        "/api/accounts": 23,
+        "/api/transactions": 16,
+        "/api/export": 11,
+        "/api/report": 2,
+        "/api/download": 1
+      },
+      "max_single_response_bytes": 52428800,
+      "avg_response_bytes": 1883843,
+      "estimated_records": 195007
+    },
+    "score": 1341,
+    "severity": "CRITICAL"
+  },
+  {
+    "attack_type": "anonymizer",
+    "ip": "10.0.0.5",
+    "start_time": "2026-04-01T09:00:31+00:00",
+    "end_time": "2026-04-01T11:51:18+00:00",
+    "duration_seconds": 10247.0,
+    "request_count": 390,
+    "total_bytes": 1192252,
+    "layer": "L4_fingerprint",
+    "is_internal": true,
+    "mitre_id": "T1090",
+    "evidence": {
+      "signals": [
+        "bot_ua_ratio=25%(98)",
+        "ua_rotation(6)"
+      ],
+      "bot_ua_count": 98,
+      "bot_ratio": 0.251,
+      "tor_ua_count": 0,
+      "unique_user_agents": 6,
+      "interval_cv": 1.084,
+      "user_agents": {
+        "Mozilla/5.0": 86,
+        "Mozilla/5.0_(Windows_NT_10.0;_Win64;_x64)": 74,
+        "Mozilla/5.0_(Macintosh;_Intel_Mac_OS_X_10_15_7)": 68
+      }
+    },
+    "score": 271,
+    "severity": "HIGH"
+  },
+  {
+    "attack_type": "anonymizer",
+    "ip": "10.0.1.14",
+    "start_time": "2026-04-01T09:00:21+00:00",
+    "end_time": "2026-04-01T11:51:05+00:00",
+    "duration_seconds": 10244.0,
+    "request_count": 382,
+    "total_bytes": 1180103,
+    "layer": "L4_fingerprint",
+    "is_internal": true,
+    "mitre_id": "T1090",
+    "evidence": {
+      "signals": [
+        "bot_ua_ratio=28%(106)",
+        "ua_rotation(6)"
+      ],
+      "bot_ua_count": 106,
+      "bot_ratio": 0.277,
+      "tor_ua_count": 0,
+      "unique_user_agents": 6,
+      "interval_cv": 1.208,
+      "user_agents": {
+        "Mozilla/5.0_(iPhone;_CPU_iPhone_OS_18_0_like_Mac_OS_X)": 87,
+        "PostmanRuntime/7.39.0": 80,
+        "Mozilla/5.0_(Macintosh;_Intel_Mac_OS_X_10_15_7)": 72
+      }
+    },
+    "score": 271,
+    "severity": "HIGH"
+  },
+  {
+    "attack_type": "anonymizer",
+    "ip": "10.0.2.33",
+    "start_time": "2026-04-01T10:03:17+00:00",
+    "end_time": "2026-04-01T11:50:36+00:00",
+    "duration_seconds": 6439.0,
+    "request_count": 194,
+    "total_bytes": 840673,
+    "layer": "L4_fingerprint",
+    "is_internal": true,
+    "mitre_id": "T1090",
+    "evidence": {
+      "signals": [
+        "bot_ua_ratio=33%(64)",
+        "ua_rotation(6)"
+      ],
+      "bot_ua_count": 64,
+      "bot_ratio": 0.33,
+      "tor_ua_count": 0,
+      "unique_user_agents": 6,
+      "interval_cv": 0.996,
+      "user_agents": {
+        "Mozilla/5.0_(iPhone;_CPU_iPhone_OS_18_0_like_Mac_OS_X)": 40,
+        "PostmanRuntime/7.39.0": 36,
+        "Mozilla/5.0": 31
+      }
+    },
+    "score": 190,
+    "severity": "MEDIUM"
+  },
+  {
+    "attack_type": "anonymizer",
+    "ip": "10.0.3.77",
+    "start_time": "2026-04-01T10:03:25+00:00",
+    "end_time": "2026-04-01T11:51:30+00:00",
+    "duration_seconds": 6485.0,
+    "request_count": 194,
+    "total_bytes": 780665,
+    "layer": "L4_fingerprint",
+    "is_internal": true,
+    "mitre_id": "T1090",
+    "evidence": {
+      "signals": [
+        "bot_ua_ratio=26%(50)",
+        "ua_rotation(6)"
+      ],
+      "bot_ua_count": 50,
+      "bot_ratio": 0.258,
+      "tor_ua_count": 0,
+      "unique_user_agents": 6,
+      "interval_cv": 0.975,
+      "user_agents": {
+        "Mozilla/5.0_(iPhone;_CPU_iPhone_OS_18_0_like_Mac_OS_X)": 47,
+        "Mozilla/5.0_(Macintosh;_Intel_Mac_OS_X_10_15_7)": 37,
+        "Mozilla/5.0_(Windows_NT_10.0;_Win64;_x64)": 31
+      }
+    },
+    "score": 248,
+    "severity": "HIGH"
+  },
+  {
+    "attack_type": "anonymizer",
+    "ip": "103.44.55.66",
+    "start_time": "2026-04-01T09:01:17+00:00",
+    "end_time": "2026-04-01T11:50:30+00:00",
+    "duration_seconds": 10153.0,
+    "request_count": 316,
+    "total_bytes": 958137,
+    "layer": "L4_fingerprint",
+    "is_internal": false,
+    "mitre_id": "T1090",
+    "evidence": {
+      "signals": [
+        "bot_ua_ratio=27%(86)",
+        "ua_rotation(6)"
+      ],
+      "bot_ua_count": 86,
+      "bot_ratio": 0.272,
+      "tor_ua_count": 0,
+      "unique_user_agents": 6,
+      "interval_cv": 0.993,
+      "user_agents": {
+        "Mozilla/5.0_(Macintosh;_Intel_Mac_OS_X_10_15_7)": 69,
+        "PostmanRuntime/7.39.0": 63,
+        "Mozilla/5.0_(Windows_NT_10.0;_Win64;_x64)": 56
+      }
+    },
+    "score": 230,
+    "severity": "HIGH"
+  },
+  {
+    "attack_type": "anonymizer",
+    "ip": "145.67.23.11",
+    "start_time": "2026-04-01T09:00:15+00:00",
+    "end_time": "2026-04-01T11:51:35+00:00",
+    "duration_seconds": 10280.0,
+    "request_count": 383,
+    "total_bytes": 1186040,
+    "layer": "L4_fingerprint",
+    "is_internal": false,
+    "mitre_id": "T1090",
+    "evidence": {
+      "signals": [
+        "bot_ua_ratio=28%(108)",
+        "ua_rotation(6)"
+      ],
+      "bot_ua_count": 108,
+      "bot_ratio": 0.282,
+      "tor_ua_count": 0,
+      "unique_user_agents": 6,
+      "interval_cv": 1.073,
+      "user_agents": {
+        "PostmanRuntime/7.39.0": 79,
+        "Mozilla/5.0_(Macintosh;_Intel_Mac_OS_X_10_15_7)": 74,
+        "Mozilla/5.0_(Windows_NT_10.0;_Win64;_x64)": 70
+      }
+    },
+    "score": 273,
+    "severity": "HIGH"
+  },
+  {
+    "attack_type": "anonymizer",
+    "ip": "176.88.14.201",
+    "start_time": "2026-04-01T09:00:44+00:00",
+    "end_time": "2026-04-01T11:51:26+00:00",
+    "duration_seconds": 10242.0,
+    "request_count": 363,
+    "total_bytes": 1092700,
+    "layer": "L4_fingerprint",
+    "is_internal": false,
+    "mitre_id": "T1090",
+    "evidence": {
+      "signals": [
+        "bot_ua_ratio=28%(102)",
+        "ua_rotation(6)"
+      ],
+      "bot_ua_count": 102,
+      "bot_ratio": 0.281,
+      "tor_ua_count": 0,
+      "unique_user_agents": 6,
+      "interval_cv": 0.996,
+      "user_agents": {
+        "Mozilla/5.0_(iPhone;_CPU_iPhone_OS_18_0_like_Mac_OS_X)": 74,
+        "Mozilla/5.0": 72,
+        "PostmanRuntime/7.39.0": 68
+      }
+    },
+    "score": 275,
+    "severity": "HIGH"
+  },
+  {
+    "attack_type": "anonymizer",
+    "ip": "185.23.44.12",
+    "start_time": "2026-04-01T09:00:01+00:00",
+    "end_time": "2026-04-01T11:49:34+00:00",
+    "duration_seconds": 10173.0,
+    "request_count": 386,
+    "total_bytes": 1131219,
+    "layer": "L4_fingerprint",
+    "is_internal": false,
+    "mitre_id": "T1090",
+    "evidence": {
+      "signals": [
+        "bot_ua_ratio=34%(133)",
+        "ua_rotation(7)"
+      ],
+      "bot_ua_count": 133,
+      "bot_ratio": 0.345,
+      "tor_ua_count": 0,
+      "unique_user_agents": 7,
+      "interval_cv": 1.056,
+      "user_agents": {
+        "PostmanRuntime/7.39.0": 73,
+        "Mozilla/5.0": 72,
+        "Mozilla/5.0_(iPhone;_CPU_iPhone_OS_18_0_like_Mac_OS_X)": 70
+      }
+    },
+    "score": 330,
+    "severity": "HIGH"
+  },
+  {
+    "attack_type": "anonymizer",
+    "ip": "198.51.100.20",
+    "start_time": "2026-04-01T09:00:12+00:00",
+    "end_time": "2026-04-01T11:50:59+00:00",
+    "duration_seconds": 10247.0,
+    "request_count": 368,
+    "total_bytes": 1157387,
+    "layer": "L4_fingerprint",
+    "is_internal": false,
+    "mitre_id": "T1090",
+    "evidence": {
+      "signals": [
+        "bot_ua_ratio=24%(90)",
+        "ua_rotation(6)"
+      ],
+      "bot_ua_count": 90,
+      "bot_ratio": 0.245,
+      "tor_ua_count": 0,
+      "unique_user_agents": 6,
+      "interval_cv": 0.966,
+      "user_agents": {
+        "Mozilla/5.0_(Windows_NT_10.0;_Win64;_x64)": 82,
+        "Mozilla/5.0_(Macintosh;_Intel_Mac_OS_X_10_15_7)": 67,
+        "Mozilla/5.0": 65
+      }
+    },
+    "score": 250,
+    "severity": "HIGH"
+  },
+  {
+    "attack_type": "anonymizer",
+    "ip": "203.0.113.45",
+    "start_time": "2026-04-01T09:01:09+00:00",
+    "end_time": "2026-04-01T11:51:23+00:00",
+    "duration_seconds": 10214.0,
+    "request_count": 364,
+    "total_bytes": 1097288,
+    "layer": "L4_fingerprint",
+    "is_internal": false,
+    "mitre_id": "T1090",
+    "evidence": {
+      "signals": [
+        "bot_ua_ratio=27%(100)",
+        "ua_rotation(6)"
+      ],
+      "bot_ua_count": 100,
+      "bot_ratio": 0.275,
+      "tor_ua_count": 0,
+      "unique_user_agents": 6,
+      "interval_cv": 1.121,
+      "user_agents": {
+        "Mozilla/5.0": 72,
+        "Mozilla/5.0_(iPhone;_CPU_iPhone_OS_18_0_like_Mac_OS_X)": 69,
+        "PostmanRuntime/7.39.0": 69
+      }
+    },
+    "score": 210,
+    "severity": "HIGH"
+  },
+  {
+    "attack_type": "anonymizer",
+    "ip": "62.122.55.90",
+    "start_time": "2026-04-01T09:00:09+00:00",
+    "end_time": "2026-04-01T11:51:19+00:00",
+    "duration_seconds": 10270.0,
+    "request_count": 373,
+    "total_bytes": 1061332,
+    "layer": "L4_fingerprint",
+    "is_internal": false,
+    "mitre_id": "T1090",
+    "evidence": {
+      "signals": [
+        "bot_ua_ratio=22%(81)",
+        "ua_rotation(6)"
+      ],
+      "bot_ua_count": 81,
+      "bot_ratio": 0.217,
+      "tor_ua_count": 0,
+      "unique_user_agents": 6,
+      "interval_cv": 1.071,
+      "user_agents": {
+        "Mozilla/5.0_(Windows_NT_10.0;_Win64;_x64)": 78,
+        "Mozilla/5.0": 78,
+        "Mozilla/5.0_(Macintosh;_Intel_Mac_OS_X_10_15_7)": 73
+      }
+    },
+    "score": 216,
+    "severity": "HIGH"
+  },
+  {
+    "attack_type": "anonymizer",
+    "ip": "77.88.99.11",
+    "start_time": "2026-04-01T09:00:02+00:00",
+    "end_time": "2026-04-01T11:50:40+00:00",
+    "duration_seconds": 10238.0,
+    "request_count": 334,
+    "total_bytes": 1047905,
+    "layer": "L4_fingerprint",
+    "is_internal": false,
+    "mitre_id": "T1090",
+    "evidence": {
+      "signals": [
+        "bot_ua_ratio=26%(87)",
+        "ua_rotation(6)"
+      ],
+      "bot_ua_count": 87,
+      "bot_ratio": 0.26,
+      "tor_ua_count": 0,
+      "unique_user_agents": 6,
+      "interval_cv": 0.997,
+      "user_agents": {
+        "Mozilla/5.0_(Windows_NT_10.0;_Win64;_x64)": 70,
+        "PostmanRuntime/7.39.0": 66,
+        "Mozilla/5.0": 66
+      }
+    },
+    "score": 226,
+    "severity": "HIGH"
+  },
+  {
+    "attack_type": "anonymizer",
+    "ip": "91.199.12.77",
+    "start_time": "2026-04-01T09:00:19+00:00",
+    "end_time": "2026-04-01T11:50:50+00:00",
+    "duration_seconds": 10231.0,
+    "request_count": 407,
+    "total_bytes": 100902240,
+    "layer": "L4_fingerprint",
+    "is_internal": false,
+    "mitre_id": "T1090",
+    "evidence": {
+      "signals": [
+        "bot_ua_ratio=30%(121)",
+        "ua_rotation(8)"
+      ],
+      "bot_ua_count": 121,
+      "bot_ratio": 0.297,
+      "tor_ua_count": 0,
+      "unique_user_agents": 8,
+      "interval_cv": 1.034,
+      "user_agents": {
+        "Mozilla/5.0": 82,
+        "PostmanRuntime/7.39.0": 79,
+        "Mozilla/5.0_(Windows_NT_10.0;_Win64;_x64)": 71
+      }
+    },
+    "score": 1341,
+    "severity": "CRITICAL"
+  },
+  {
+    "attack_type": "anonymizer",
+    "ip": "93.184.216.34",
+    "start_time": "2026-04-01T09:01:20+00:00",
+    "end_time": "2026-04-01T11:51:31+00:00",
+    "duration_seconds": 10211.0,
+    "request_count": 387,
+    "total_bytes": 1210178,
+    "layer": "L4_fingerprint",
+    "is_internal": false,
+    "mitre_id": "T1090",
+    "evidence": {
+      "signals": [
+        "bot_ua_ratio=27%(104)",
+        "ua_rotation(6)"
+      ],
+      "bot_ua_count": 104,
+      "bot_ratio": 0.269,
+      "tor_ua_count": 0,
+      "unique_user_agents": 6,
+      "interval_cv": 1.059,
+      "user_agents": {
+        "Mozilla/5.0_(iPhone;_CPU_iPhone_OS_18_0_like_Mac_OS_X)": 77,
+        "Mozilla/5.0_(Windows_NT_10.0;_Win64;_x64)": 77,
+        "PostmanRuntime/7.39.0": 71
+      }
+    },
+    "score": 237,
+    "severity": "HIGH"
+  },
+  {
+    "attack_type": "admin_recon",
+    "ip": "10.0.0.5",
+    "start_time": "2026-04-01T10:03:05+00:00",
+    "end_time": "2026-04-01T11:17:27+00:00",
+    "duration_seconds": 4462.0,
+    "request_count": 9,
+    "total_bytes": 27588,
+    "layer": "L2_session",
+    "is_internal": true,
+    "mitre_id": "T1087",
+    "evidence": {
+      "admin_endpoints_hit": {
+        "/admin": 8,
+        "/admin/users": 1
+      },
+      "deep_admin_hits": 1,
+      "successful_admin_access": 8,
+      "user_agents": [
+        "Mozilla/5.0",
+        "PostmanRuntime/7.39.0",
+        "Mozilla/5.0_(iPhone;_CPU_iPhone_OS_18_0_like_Mac_OS_X)"
+      ]
+    },
+    "score": 271,
+    "severity": "HIGH"
+  },
+  {
+    "attack_type": "admin_recon",
+    "ip": "10.0.1.14",
+    "start_time": "2026-04-01T10:06:01+00:00",
+    "end_time": "2026-04-01T11:45:30+00:00",
+    "duration_seconds": 5969.0,
+    "request_count": 13,
+    "total_bytes": 57618,
+    "layer": "L2_session",
+    "is_internal": true,
+    "mitre_id": "T1087",
+    "evidence": {
+      "admin_endpoints_hit": {
+        "/admin": 13
+      },
+      "deep_admin_hits": 0,
+      "successful_admin_access": 11,
+      "user_agents": [
+        "Mozilla/5.0_(Windows_NT_10.0;_Win64;_x64)",
+        "Mozilla/5.0_(Macintosh;_Intel_Mac_OS_X_10_15_7)",
+        "PostmanRuntime/7.39.0"
+      ]
+    },
+    "score": 271,
+    "severity": "HIGH"
+  },
+  {
+    "attack_type": "admin_recon",
+    "ip": "10.0.2.33",
+    "start_time": "2026-04-01T10:03:17+00:00",
+    "end_time": "2026-04-01T11:41:10+00:00",
+    "duration_seconds": 5873.0,
+    "request_count": 8,
+    "total_bytes": 29883,
+    "layer": "L2_session",
+    "is_internal": true,
+    "mitre_id": "T1087",
+    "evidence": {
+      "admin_endpoints_hit": {
+        "/admin": 7,
+        "/internal/audit": 1
+      },
+      "deep_admin_hits": 1,
+      "successful_admin_access": 8,
+      "user_agents": [
+        "Mozilla/5.0",
+        "Mozilla/5.0_(iPhone;_CPU_iPhone_OS_18_0_like_Mac_OS_X)",
+        "curl/8.0.1"
+      ]
+    },
+    "score": 190,
+    "severity": "MEDIUM"
+  },
+  {
+    "attack_type": "admin_recon",
+    "ip": "10.0.3.77",
+    "start_time": "2026-04-01T10:03:25+00:00",
+    "end_time": "2026-04-01T11:49:14+00:00",
+    "duration_seconds": 6349.0,
+    "request_count": 15,
+    "total_bytes": 63976,
+    "layer": "L2_session",
+    "is_internal": true,
+    "mitre_id": "T1087",
+    "evidence": {
+      "admin_endpoints_hit": {
+        "/admin": 14,
+        "/admin/export": 1
+      },
+      "deep_admin_hits": 1,
+      "successful_admin_access": 14,
+      "user_agents": [
+        "Mozilla/5.0",
+        "Mozilla/5.0_(iPhone;_CPU_iPhone_OS_18_0_like_Mac_OS_X)",
+        "Mozilla/5.0_(Windows_NT_10.0;_Win64;_x64)"
+      ]
+    },
+    "score": 248,
+    "severity": "HIGH"
+  },
+  {
+    "attack_type": "admin_recon",
+    "ip": "103.44.55.66",
+    "start_time": "2026-04-01T10:08:53+00:00",
+    "end_time": "2026-04-01T11:43:36+00:00",
+    "duration_seconds": 5683.0,
+    "request_count": 8,
+    "total_bytes": 27613,
+    "layer": "L2_session",
+    "is_internal": false,
+    "mitre_id": "T1087",
+    "evidence": {
+      "admin_endpoints_hit": {
+        "/admin": 8
+      },
+      "deep_admin_hits": 0,
+      "successful_admin_access": 7,
+      "user_agents": [
+        "Mozilla/5.0",
+        "Mozilla/5.0_(Macintosh;_Intel_Mac_OS_X_10_15_7)",
+        "Mozilla/5.0_(iPhone;_CPU_iPhone_OS_18_0_like_Mac_OS_X)"
+      ]
+    },
+    "score": 230,
+    "severity": "HIGH"
+  },
+  {
+    "attack_type": "admin_recon",
+    "ip": "145.67.23.11",
+    "start_time": "2026-04-01T10:06:27+00:00",
+    "end_time": "2026-04-01T11:41:03+00:00",
+    "duration_seconds": 5676.0,
+    "request_count": 16,
+    "total_bytes": 59355,
+    "layer": "L2_session",
+    "is_internal": false,
+    "mitre_id": "T1087",
+    "evidence": {
+      "admin_endpoints_hit": {
+        "/admin": 16
+      },
+      "deep_admin_hits": 0,
+      "successful_admin_access": 12,
+      "user_agents": [
+        "curl/8.0.1",
+        "Mozilla/5.0_(iPhone;_CPU_iPhone_OS_18_0_like_Mac_OS_X)",
+        "Mozilla/5.0"
+      ]
+    },
+    "score": 273,
+    "severity": "HIGH"
+  },
+  {
+    "attack_type": "admin_recon",
+    "ip": "176.88.14.201",
+    "start_time": "2026-04-01T10:04:43+00:00",
+    "end_time": "2026-04-01T11:32:26+00:00",
+    "duration_seconds": 5263.0,
+    "request_count": 14,
+    "total_bytes": 64975,
+    "layer": "L2_session",
+    "is_internal": false,
+    "mitre_id": "T1087",
+    "evidence": {
+      "admin_endpoints_hit": {
+        "/admin": 14
+      },
+      "deep_admin_hits": 0,
+      "successful_admin_access": 10,
+      "user_agents": [
+        "curl/8.0.1",
+        "PostmanRuntime/7.39.0",
+        "Mozilla/5.0"
+      ]
+    },
+    "score": 275,
+    "severity": "HIGH"
+  },
+  {
+    "attack_type": "admin_recon",
+    "ip": "185.23.44.12",
+    "start_time": "2026-04-01T10:13:33+00:00",
+    "end_time": "2026-04-01T11:45:04+00:00",
+    "duration_seconds": 5491.0,
+    "request_count": 8,
+    "total_bytes": 33483,
+    "layer": "L2_session",
+    "is_internal": false,
+    "mitre_id": "T1087",
+    "evidence": {
+      "admin_endpoints_hit": {
+        "/admin": 8
+      },
+      "deep_admin_hits": 0,
+      "successful_admin_access": 8,
+      "user_agents": [
+        "Mozilla/5.0_(iPhone;_CPU_iPhone_OS_18_0_like_Mac_OS_X)",
+        "Mozilla/5.0",
+        "curl/8.0.1"
+      ]
+    },
+    "score": 330,
+    "severity": "HIGH"
+  },
+  {
+    "attack_type": "admin_recon",
+    "ip": "198.51.100.20",
+    "start_time": "2026-04-01T10:07:17+00:00",
+    "end_time": "2026-04-01T11:47:34+00:00",
+    "duration_seconds": 6017.0,
+    "request_count": 11,
+    "total_bytes": 44150,
+    "layer": "L2_session",
+    "is_internal": false,
+    "mitre_id": "T1087",
+    "evidence": {
+      "admin_endpoints_hit": {
+        "/admin": 11
+      },
+      "deep_admin_hits": 0,
+      "successful_admin_access": 9,
+      "user_agents": [
+        "Mozilla/5.0_(Windows_NT_10.0;_Win64;_x64)",
+        "curl/8.0.1",
+        "Mozilla/5.0_(iPhone;_CPU_iPhone_OS_18_0_like_Mac_OS_X)"
+      ]
+    },
+    "score": 250,
+    "severity": "HIGH"
+  },
+  {
+    "attack_type": "admin_recon",
+    "ip": "203.0.113.45",
+    "start_time": "2026-04-01T10:04:57+00:00",
+    "end_time": "2026-04-01T11:37:50+00:00",
+    "duration_seconds": 5573.0,
+    "request_count": 9,
+    "total_bytes": 34321,
+    "layer": "L2_session",
+    "is_internal": false,
+    "mitre_id": "T1087",
+    "evidence": {
+      "admin_endpoints_hit": {
+        "/admin": 9
+      },
+      "deep_admin_hits": 0,
+      "successful_admin_access": 7,
+      "user_agents": [
+        "PostmanRuntime/7.39.0",
+        "Mozilla/5.0_(iPhone;_CPU_iPhone_OS_18_0_like_Mac_OS_X)",
+        "Mozilla/5.0_(Macintosh;_Intel_Mac_OS_X_10_15_7)"
+      ]
+    },
+    "score": 210,
+    "severity": "HIGH"
+  },
+  {
+    "attack_type": "admin_recon",
+    "ip": "62.122.55.90",
+    "start_time": "2026-04-01T10:08:07+00:00",
+    "end_time": "2026-04-01T11:49:22+00:00",
+    "duration_seconds": 6075.0,
+    "request_count": 10,
+    "total_bytes": 37429,
+    "layer": "L2_session",
+    "is_internal": false,
+    "mitre_id": "T1087",
+    "evidence": {
+      "admin_endpoints_hit": {
+        "/admin": 10
+      },
+      "deep_admin_hits": 0,
+      "successful_admin_access": 9,
+      "user_agents": [
+        "Mozilla/5.0_(Macintosh;_Intel_Mac_OS_X_10_15_7)",
+        "Mozilla/5.0_(iPhone;_CPU_iPhone_OS_18_0_like_Mac_OS_X)",
+        "PostmanRuntime/7.39.0"
+      ]
+    },
+    "score": 216,
+    "severity": "HIGH"
+  },
+  {
+    "attack_type": "admin_recon",
+    "ip": "77.88.99.11",
+    "start_time": "2026-04-01T10:05:04+00:00",
+    "end_time": "2026-04-01T11:30:19+00:00",
+    "duration_seconds": 5115.0,
+    "request_count": 13,
+    "total_bytes": 58712,
+    "layer": "L2_session",
+    "is_internal": false,
+    "mitre_id": "T1087",
+    "evidence": {
+      "admin_endpoints_hit": {
+        "/admin": 13
+      },
+      "deep_admin_hits": 0,
+      "successful_admin_access": 11,
+      "user_agents": [
+        "curl/8.0.1",
+        "PostmanRuntime/7.39.0",
+        "Mozilla/5.0_(Macintosh;_Intel_Mac_OS_X_10_15_7)"
+      ]
+    },
+    "score": 226,
+    "severity": "HIGH"
+  },
+  {
+    "attack_type": "admin_recon",
+    "ip": "91.199.12.77",
+    "start_time": "2026-04-01T10:02:25+00:00",
+    "end_time": "2026-04-01T11:35:36+00:00",
+    "duration_seconds": 5591.0,
+    "request_count": 10,
+    "total_bytes": 49300,
+    "layer": "L2_session",
+    "is_internal": false,
+    "mitre_id": "T1087",
+    "evidence": {
+      "admin_endpoints_hit": {
+        "/admin": 10
+      },
+      "deep_admin_hits": 0,
+      "successful_admin_access": 9,
+      "user_agents": [
+        "sqlmap/1.7.2#stable",
+        "Mozilla/5.0_(iPhone;_CPU_iPhone_OS_18_0_like_Mac_OS_X)",
+        "curl/8.0.1"
+      ]
+    },
+    "score": 1341,
+    "severity": "CRITICAL"
+  },
+  {
+    "attack_type": "admin_recon",
+    "ip": "93.184.216.34",
+    "start_time": "2026-04-01T10:05:33+00:00",
+    "end_time": "2026-04-01T11:50:14+00:00",
+    "duration_seconds": 6281.0,
+    "request_count": 9,
+    "total_bytes": 40293,
+    "layer": "L2_session",
+    "is_internal": false,
+    "mitre_id": "T1087",
+    "evidence": {
+      "admin_endpoints_hit": {
+        "/admin": 9
+      },
+      "deep_admin_hits": 0,
+      "successful_admin_access": 8,
+      "user_agents": [
+        "Mozilla/5.0_(Macintosh;_Intel_Mac_OS_X_10_15_7)",
+        "Mozilla/5.0_(Windows_NT_10.0;_Win64;_x64)",
+        "Mozilla/5.0"
+      ]
+    },
+    "score": 237,
+    "severity": "HIGH"
+  },
+  {
+    "attack_type": "distributed_fingerprint",
+    "ip": "10.0.0.5, 91.199.12.77",
+    "start_time": "2026-04-01T09:00:19+00:00",
+    "end_time": "2026-04-01T11:51:18+00:00",
+    "duration_seconds": 10259.0,
+    "request_count": 797,
+    "total_bytes": 102094492,
+    "layer": "L4_fingerprint",
+    "is_internal": false,
+    "mitre_id": "T1583.003",
+    "evidence": {
+      "shared_ips": [
+        "10.0.0.5",
+        "91.199.12.77"
+      ],
+      "ip_count": 2,
+      "dominant_ua": "Mozilla/5.0",
+      "common_endpoints": [
+        "/api/accounts",
+        "/api/profile",
+        "/cards",
+        "/login",
+        "/payments"
+      ],
+      "rhythm_class": "normal"
+    },
+    "score": 271,
+    "severity": "HIGH"
+  }
+]

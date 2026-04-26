@@ -1,0 +1,536 @@
+[
+  {
+    "ip": "91.199.12.77",
+    "stages_count": 4,
+    "stage_types": [
+      "admin_recon",
+      "anonymizer",
+      "data_exfiltration",
+      "sql_injection"
+    ],
+    "is_internal": false,
+    "first_seen": "2026-04-01 09:00:19+00:00",
+    "last_seen": "2026-04-01 11:35:36+00:00",
+    "total_duration": 9317.0,
+    "total_requests": 476,
+    "total_bytes": 200849533,
+    "max_severity": "CRITICAL",
+    "critical_combo": true,
+    "steps": [
+      {
+        "stage": "anonymizer",
+        "start": "2026-04-01 09:00:19+00:00",
+        "end": "2026-04-01 11:50:50+00:00",
+        "duration": 10231.0,
+        "requests": 407,
+        "bytes": 100902240,
+        "mitre": "T1090"
+      },
+      {
+        "stage": "data_exfiltration",
+        "start": "2026-04-01 09:00:23+00:00",
+        "end": "2026-04-01 11:48:20+00:00",
+        "duration": 10077.0,
+        "requests": 53,
+        "bytes": 99843681,
+        "mitre": "T1041"
+      },
+      {
+        "stage": "sql_injection",
+        "start": "2026-04-01 10:02:04+00:00",
+        "end": "2026-04-01 10:02:20+00:00",
+        "duration": 16.0,
+        "requests": 6,
+        "bytes": 54312,
+        "mitre": "T1190"
+      },
+      {
+        "stage": "admin_recon",
+        "start": "2026-04-01 10:02:25+00:00",
+        "end": "2026-04-01 11:35:36+00:00",
+        "duration": 5591.0,
+        "requests": 10,
+        "bytes": 49300,
+        "mitre": "T1087"
+      }
+    ]
+  },
+  {
+    "ip": "185.23.44.12",
+    "stages_count": 3,
+    "stage_types": [
+      "admin_recon",
+      "anonymizer",
+      "credential_stuffing"
+    ],
+    "is_internal": false,
+    "first_seen": "2026-04-01 09:00:01+00:00",
+    "last_seen": "2026-04-01 11:45:04+00:00",
+    "total_duration": 9903.0,
+    "total_requests": 439,
+    "total_bytes": 1187101,
+    "max_severity": "HIGH",
+    "critical_combo": false,
+    "steps": [
+      {
+        "stage": "anonymizer",
+        "start": "2026-04-01 09:00:01+00:00",
+        "end": "2026-04-01 11:49:34+00:00",
+        "duration": 10173.0,
+        "requests": 386,
+        "bytes": 1131219,
+        "mitre": "T1090"
+      },
+      {
+        "stage": "credential_stuffing",
+        "start": "2026-04-01 09:01:59+00:00",
+        "end": "2026-04-01 11:15:58+00:00",
+        "duration": 8039.0,
+        "requests": 45,
+        "bytes": 22399,
+        "mitre": "T1110.004"
+      },
+      {
+        "stage": "admin_recon",
+        "start": "2026-04-01 10:13:33+00:00",
+        "end": "2026-04-01 11:45:04+00:00",
+        "duration": 5491.0,
+        "requests": 8,
+        "bytes": 33483,
+        "mitre": "T1087"
+      }
+    ]
+  },
+  {
+    "ip": "10.0.0.5",
+    "stages_count": 2,
+    "stage_types": [
+      "admin_recon",
+      "anonymizer"
+    ],
+    "is_internal": true,
+    "first_seen": "2026-04-01 09:00:31+00:00",
+    "last_seen": "2026-04-01 11:17:27+00:00",
+    "total_duration": 8216.0,
+    "total_requests": 399,
+    "total_bytes": 1219840,
+    "max_severity": "HIGH",
+    "critical_combo": false,
+    "steps": [
+      {
+        "stage": "anonymizer",
+        "start": "2026-04-01 09:00:31+00:00",
+        "end": "2026-04-01 11:51:18+00:00",
+        "duration": 10247.0,
+        "requests": 390,
+        "bytes": 1192252,
+        "mitre": "T1090"
+      },
+      {
+        "stage": "admin_recon",
+        "start": "2026-04-01 10:03:05+00:00",
+        "end": "2026-04-01 11:17:27+00:00",
+        "duration": 4462.0,
+        "requests": 9,
+        "bytes": 27588,
+        "mitre": "T1087"
+      }
+    ]
+  },
+  {
+    "ip": "10.0.1.14",
+    "stages_count": 2,
+    "stage_types": [
+      "admin_recon",
+      "anonymizer"
+    ],
+    "is_internal": true,
+    "first_seen": "2026-04-01 09:00:21+00:00",
+    "last_seen": "2026-04-01 11:45:30+00:00",
+    "total_duration": 9909.0,
+    "total_requests": 395,
+    "total_bytes": 1237721,
+    "max_severity": "HIGH",
+    "critical_combo": false,
+    "steps": [
+      {
+        "stage": "anonymizer",
+        "start": "2026-04-01 09:00:21+00:00",
+        "end": "2026-04-01 11:51:05+00:00",
+        "duration": 10244.0,
+        "requests": 382,
+        "bytes": 1180103,
+        "mitre": "T1090"
+      },
+      {
+        "stage": "admin_recon",
+        "start": "2026-04-01 10:06:01+00:00",
+        "end": "2026-04-01 11:45:30+00:00",
+        "duration": 5969.0,
+        "requests": 13,
+        "bytes": 57618,
+        "mitre": "T1087"
+      }
+    ]
+  },
+  {
+    "ip": "10.0.3.77",
+    "stages_count": 2,
+    "stage_types": [
+      "admin_recon",
+      "anonymizer"
+    ],
+    "is_internal": true,
+    "first_seen": "2026-04-01 10:03:25+00:00",
+    "last_seen": "2026-04-01 11:49:14+00:00",
+    "total_duration": 6349.0,
+    "total_requests": 209,
+    "total_bytes": 844641,
+    "max_severity": "HIGH",
+    "critical_combo": false,
+    "steps": [
+      {
+        "stage": "anonymizer",
+        "start": "2026-04-01 10:03:25+00:00",
+        "end": "2026-04-01 11:51:30+00:00",
+        "duration": 6485.0,
+        "requests": 194,
+        "bytes": 780665,
+        "mitre": "T1090"
+      },
+      {
+        "stage": "admin_recon",
+        "start": "2026-04-01 10:03:25+00:00",
+        "end": "2026-04-01 11:49:14+00:00",
+        "duration": 6349.0,
+        "requests": 15,
+        "bytes": 63976,
+        "mitre": "T1087"
+      }
+    ]
+  },
+  {
+    "ip": "103.44.55.66",
+    "stages_count": 2,
+    "stage_types": [
+      "admin_recon",
+      "anonymizer"
+    ],
+    "is_internal": false,
+    "first_seen": "2026-04-01 09:01:17+00:00",
+    "last_seen": "2026-04-01 11:43:36+00:00",
+    "total_duration": 9739.0,
+    "total_requests": 324,
+    "total_bytes": 985750,
+    "max_severity": "HIGH",
+    "critical_combo": false,
+    "steps": [
+      {
+        "stage": "anonymizer",
+        "start": "2026-04-01 09:01:17+00:00",
+        "end": "2026-04-01 11:50:30+00:00",
+        "duration": 10153.0,
+        "requests": 316,
+        "bytes": 958137,
+        "mitre": "T1090"
+      },
+      {
+        "stage": "admin_recon",
+        "start": "2026-04-01 10:08:53+00:00",
+        "end": "2026-04-01 11:43:36+00:00",
+        "duration": 5683.0,
+        "requests": 8,
+        "bytes": 27613,
+        "mitre": "T1087"
+      }
+    ]
+  },
+  {
+    "ip": "145.67.23.11",
+    "stages_count": 2,
+    "stage_types": [
+      "admin_recon",
+      "anonymizer"
+    ],
+    "is_internal": false,
+    "first_seen": "2026-04-01 09:00:15+00:00",
+    "last_seen": "2026-04-01 11:41:03+00:00",
+    "total_duration": 9648.0,
+    "total_requests": 399,
+    "total_bytes": 1245395,
+    "max_severity": "HIGH",
+    "critical_combo": false,
+    "steps": [
+      {
+        "stage": "anonymizer",
+        "start": "2026-04-01 09:00:15+00:00",
+        "end": "2026-04-01 11:51:35+00:00",
+        "duration": 10280.0,
+        "requests": 383,
+        "bytes": 1186040,
+        "mitre": "T1090"
+      },
+      {
+        "stage": "admin_recon",
+        "start": "2026-04-01 10:06:27+00:00",
+        "end": "2026-04-01 11:41:03+00:00",
+        "duration": 5676.0,
+        "requests": 16,
+        "bytes": 59355,
+        "mitre": "T1087"
+      }
+    ]
+  },
+  {
+    "ip": "176.88.14.201",
+    "stages_count": 2,
+    "stage_types": [
+      "admin_recon",
+      "anonymizer"
+    ],
+    "is_internal": false,
+    "first_seen": "2026-04-01 09:00:44+00:00",
+    "last_seen": "2026-04-01 11:32:26+00:00",
+    "total_duration": 9102.0,
+    "total_requests": 377,
+    "total_bytes": 1157675,
+    "max_severity": "HIGH",
+    "critical_combo": false,
+    "steps": [
+      {
+        "stage": "anonymizer",
+        "start": "2026-04-01 09:00:44+00:00",
+        "end": "2026-04-01 11:51:26+00:00",
+        "duration": 10242.0,
+        "requests": 363,
+        "bytes": 1092700,
+        "mitre": "T1090"
+      },
+      {
+        "stage": "admin_recon",
+        "start": "2026-04-01 10:04:43+00:00",
+        "end": "2026-04-01 11:32:26+00:00",
+        "duration": 5263.0,
+        "requests": 14,
+        "bytes": 64975,
+        "mitre": "T1087"
+      }
+    ]
+  },
+  {
+    "ip": "198.51.100.20",
+    "stages_count": 2,
+    "stage_types": [
+      "admin_recon",
+      "anonymizer"
+    ],
+    "is_internal": false,
+    "first_seen": "2026-04-01 09:00:12+00:00",
+    "last_seen": "2026-04-01 11:47:34+00:00",
+    "total_duration": 10042.0,
+    "total_requests": 379,
+    "total_bytes": 1201537,
+    "max_severity": "HIGH",
+    "critical_combo": false,
+    "steps": [
+      {
+        "stage": "anonymizer",
+        "start": "2026-04-01 09:00:12+00:00",
+        "end": "2026-04-01 11:50:59+00:00",
+        "duration": 10247.0,
+        "requests": 368,
+        "bytes": 1157387,
+        "mitre": "T1090"
+      },
+      {
+        "stage": "admin_recon",
+        "start": "2026-04-01 10:07:17+00:00",
+        "end": "2026-04-01 11:47:34+00:00",
+        "duration": 6017.0,
+        "requests": 11,
+        "bytes": 44150,
+        "mitre": "T1087"
+      }
+    ]
+  },
+  {
+    "ip": "203.0.113.45",
+    "stages_count": 2,
+    "stage_types": [
+      "admin_recon",
+      "anonymizer"
+    ],
+    "is_internal": false,
+    "first_seen": "2026-04-01 09:01:09+00:00",
+    "last_seen": "2026-04-01 11:37:50+00:00",
+    "total_duration": 9401.0,
+    "total_requests": 373,
+    "total_bytes": 1131609,
+    "max_severity": "HIGH",
+    "critical_combo": false,
+    "steps": [
+      {
+        "stage": "anonymizer",
+        "start": "2026-04-01 09:01:09+00:00",
+        "end": "2026-04-01 11:51:23+00:00",
+        "duration": 10214.0,
+        "requests": 364,
+        "bytes": 1097288,
+        "mitre": "T1090"
+      },
+      {
+        "stage": "admin_recon",
+        "start": "2026-04-01 10:04:57+00:00",
+        "end": "2026-04-01 11:37:50+00:00",
+        "duration": 5573.0,
+        "requests": 9,
+        "bytes": 34321,
+        "mitre": "T1087"
+      }
+    ]
+  },
+  {
+    "ip": "62.122.55.90",
+    "stages_count": 2,
+    "stage_types": [
+      "admin_recon",
+      "anonymizer"
+    ],
+    "is_internal": false,
+    "first_seen": "2026-04-01 09:00:09+00:00",
+    "last_seen": "2026-04-01 11:49:22+00:00",
+    "total_duration": 10153.0,
+    "total_requests": 383,
+    "total_bytes": 1098761,
+    "max_severity": "HIGH",
+    "critical_combo": false,
+    "steps": [
+      {
+        "stage": "anonymizer",
+        "start": "2026-04-01 09:00:09+00:00",
+        "end": "2026-04-01 11:51:19+00:00",
+        "duration": 10270.0,
+        "requests": 373,
+        "bytes": 1061332,
+        "mitre": "T1090"
+      },
+      {
+        "stage": "admin_recon",
+        "start": "2026-04-01 10:08:07+00:00",
+        "end": "2026-04-01 11:49:22+00:00",
+        "duration": 6075.0,
+        "requests": 10,
+        "bytes": 37429,
+        "mitre": "T1087"
+      }
+    ]
+  },
+  {
+    "ip": "77.88.99.11",
+    "stages_count": 2,
+    "stage_types": [
+      "admin_recon",
+      "anonymizer"
+    ],
+    "is_internal": false,
+    "first_seen": "2026-04-01 09:00:02+00:00",
+    "last_seen": "2026-04-01 11:30:19+00:00",
+    "total_duration": 9017.0,
+    "total_requests": 347,
+    "total_bytes": 1106617,
+    "max_severity": "HIGH",
+    "critical_combo": false,
+    "steps": [
+      {
+        "stage": "anonymizer",
+        "start": "2026-04-01 09:00:02+00:00",
+        "end": "2026-04-01 11:50:40+00:00",
+        "duration": 10238.0,
+        "requests": 334,
+        "bytes": 1047905,
+        "mitre": "T1090"
+      },
+      {
+        "stage": "admin_recon",
+        "start": "2026-04-01 10:05:04+00:00",
+        "end": "2026-04-01 11:30:19+00:00",
+        "duration": 5115.0,
+        "requests": 13,
+        "bytes": 58712,
+        "mitre": "T1087"
+      }
+    ]
+  },
+  {
+    "ip": "93.184.216.34",
+    "stages_count": 2,
+    "stage_types": [
+      "admin_recon",
+      "anonymizer"
+    ],
+    "is_internal": false,
+    "first_seen": "2026-04-01 09:01:20+00:00",
+    "last_seen": "2026-04-01 11:50:14+00:00",
+    "total_duration": 10134.0,
+    "total_requests": 396,
+    "total_bytes": 1250471,
+    "max_severity": "HIGH",
+    "critical_combo": false,
+    "steps": [
+      {
+        "stage": "anonymizer",
+        "start": "2026-04-01 09:01:20+00:00",
+        "end": "2026-04-01 11:51:31+00:00",
+        "duration": 10211.0,
+        "requests": 387,
+        "bytes": 1210178,
+        "mitre": "T1090"
+      },
+      {
+        "stage": "admin_recon",
+        "start": "2026-04-01 10:05:33+00:00",
+        "end": "2026-04-01 11:50:14+00:00",
+        "duration": 6281.0,
+        "requests": 9,
+        "bytes": 40293,
+        "mitre": "T1087"
+      }
+    ]
+  },
+  {
+    "ip": "10.0.2.33",
+    "stages_count": 2,
+    "stage_types": [
+      "admin_recon",
+      "anonymizer"
+    ],
+    "is_internal": true,
+    "first_seen": "2026-04-01 10:03:17+00:00",
+    "last_seen": "2026-04-01 11:41:10+00:00",
+    "total_duration": 5873.0,
+    "total_requests": 202,
+    "total_bytes": 870556,
+    "max_severity": "MEDIUM",
+    "critical_combo": false,
+    "steps": [
+      {
+        "stage": "anonymizer",
+        "start": "2026-04-01 10:03:17+00:00",
+        "end": "2026-04-01 11:50:36+00:00",
+        "duration": 6439.0,
+        "requests": 194,
+        "bytes": 840673,
+        "mitre": "T1090"
+      },
+      {
+        "stage": "admin_recon",
+        "start": "2026-04-01 10:03:17+00:00",
+        "end": "2026-04-01 11:41:10+00:00",
+        "duration": 5873.0,
+        "requests": 8,
+        "bytes": 29883,
+        "mitre": "T1087"
+      }
+    ]
+  }
+]

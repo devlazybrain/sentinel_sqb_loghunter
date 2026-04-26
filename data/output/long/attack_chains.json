@@ -1,0 +1,130 @@
+[
+  {
+    "ip": "185.220.101.42",
+    "stages_count": 4,
+    "stage_types": [
+      "admin_recon",
+      "anonymizer",
+      "credential_stuffing",
+      "data_exfiltration"
+    ],
+    "is_internal": false,
+    "first_seen": "2026-03-20 05:21:00+00:00",
+    "last_seen": "2026-04-17 05:58:00+00:00",
+    "total_duration": 2421420.0,
+    "total_requests": 172,
+    "total_bytes": 84544652,
+    "max_severity": "CRITICAL",
+    "critical_combo": true,
+    "steps": [
+      {
+        "stage": "anonymizer",
+        "start": "2026-03-20 05:21:00+00:00",
+        "end": "2026-04-17 05:58:00+00:00",
+        "duration": 2421420.0,
+        "requests": 86,
+        "bytes": 42272326,
+        "mitre": "T1090"
+      },
+      {
+        "stage": "admin_recon",
+        "start": "2026-03-20 05:21:00+00:00",
+        "end": "2026-03-25 06:52:00+00:00",
+        "duration": 437460.0,
+        "requests": 4,
+        "bytes": 7602,
+        "mitre": "T1087"
+      },
+      {
+        "stage": "credential_stuffing",
+        "start": "2026-03-25 02:40:00+00:00",
+        "end": "2026-04-09 04:33:00+00:00",
+        "duration": 1302780.0,
+        "requests": 44,
+        "bytes": 15245,
+        "mitre": "T1110.004"
+      },
+      {
+        "stage": "data_exfiltration",
+        "start": "2026-04-09 03:19:00+00:00",
+        "end": "2026-04-17 05:58:00+00:00",
+        "duration": 700740.0,
+        "requests": 38,
+        "bytes": 42249479,
+        "mitre": "T1041"
+      }
+    ]
+  },
+  {
+    "ip": "103.44.55.66",
+    "stages_count": 2,
+    "stage_types": [
+      "anonymizer",
+      "data_exfiltration"
+    ],
+    "is_internal": false,
+    "first_seen": "2026-03-30 02:15:00+00:00",
+    "last_seen": "2026-03-30 02:28:47+00:00",
+    "total_duration": 827.0,
+    "total_requests": 110,
+    "total_bytes": 431416418,
+    "max_severity": "CRITICAL",
+    "critical_combo": false,
+    "steps": [
+      {
+        "stage": "data_exfiltration",
+        "start": "2026-03-30 02:15:00+00:00",
+        "end": "2026-03-30 02:28:47+00:00",
+        "duration": 827.0,
+        "requests": 55,
+        "bytes": 215708209,
+        "mitre": "T1041"
+      },
+      {
+        "stage": "anonymizer",
+        "start": "2026-03-30 02:15:00+00:00",
+        "end": "2026-03-30 02:28:47+00:00",
+        "duration": 827.0,
+        "requests": 55,
+        "bytes": 215708209,
+        "mitre": "T1090"
+      }
+    ]
+  },
+  {
+    "ip": "185.23.44.12",
+    "stages_count": 2,
+    "stage_types": [
+      "anonymizer",
+      "credential_stuffing"
+    ],
+    "is_internal": false,
+    "first_seen": "2026-03-15 14:00:00+00:00",
+    "last_seen": "2026-03-15 14:03:44+00:00",
+    "total_duration": 224.0,
+    "total_requests": 100,
+    "total_bytes": 27078,
+    "max_severity": "HIGH",
+    "critical_combo": false,
+    "steps": [
+      {
+        "stage": "credential_stuffing",
+        "start": "2026-03-15 14:00:00+00:00",
+        "end": "2026-03-15 14:03:44+00:00",
+        "duration": 224.0,
+        "requests": 50,
+        "bytes": 13539,
+        "mitre": "T1110.004"
+      },
+      {
+        "stage": "anonymizer",
+        "start": "2026-03-15 14:00:00+00:00",
+        "end": "2026-03-15 14:03:44+00:00",
+        "duration": 224.0,
+        "requests": 50,
+        "bytes": 13539,
+        "mitre": "T1090"
+      }
+    ]
+  }
+]

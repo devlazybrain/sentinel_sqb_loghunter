@@ -1,0 +1,334 @@
+[
+  {
+    "attack_type": "credential_stuffing",
+    "ip": "185.220.101.42",
+    "start_time": "2026-03-25T02:40:00+00:00",
+    "end_time": "2026-04-09T04:33:00+00:00",
+    "duration_seconds": 1302780.0,
+    "request_count": 44,
+    "total_bytes": 15245,
+    "layer": "L2_session",
+    "is_internal": false,
+    "mitre_id": "T1110.004",
+    "evidence": {
+      "failed_logins": 28,
+      "successful_logins": 16,
+      "failure_ratio": 0.636,
+      "unique_user_agents": 1,
+      "bot_ua_used": false
+    },
+    "score": 715,
+    "severity": "CRITICAL"
+  },
+  {
+    "attack_type": "credential_stuffing",
+    "ip": "185.23.44.12",
+    "start_time": "2026-03-15T14:00:00+00:00",
+    "end_time": "2026-03-15T14:03:44+00:00",
+    "duration_seconds": 224.0,
+    "request_count": 50,
+    "total_bytes": 13539,
+    "layer": "L1_burst",
+    "is_internal": false,
+    "mitre_id": "T1110.004",
+    "evidence": {
+      "failed_logins": 41,
+      "successful_logins": 9,
+      "failure_ratio": 0.82,
+      "unique_user_agents": 1,
+      "bot_ua_used": true
+    },
+    "score": 245,
+    "severity": "HIGH"
+  },
+  {
+    "attack_type": "credential_stuffing",
+    "ip": "203.0.113.45",
+    "start_time": "2026-04-20T03:12:00+00:00",
+    "end_time": "2026-04-20T03:15:10+00:00",
+    "duration_seconds": 190.0,
+    "request_count": 65,
+    "total_bytes": 18254,
+    "layer": "L1_burst",
+    "is_internal": false,
+    "mitre_id": "T1110.004",
+    "evidence": {
+      "failed_logins": 58,
+      "successful_logins": 7,
+      "failure_ratio": 0.892,
+      "unique_user_agents": 1,
+      "bot_ua_used": false
+    },
+    "score": 305,
+    "severity": "HIGH"
+  },
+  {
+    "attack_type": "credential_stuffing",
+    "ip": "45.142.213.99",
+    "start_time": "2026-03-10T02:00:00+00:00",
+    "end_time": "2026-04-23T23:21:00+00:00",
+    "duration_seconds": 3878460.0,
+    "request_count": 871,
+    "total_bytes": 275460,
+    "layer": "L2_session",
+    "is_internal": false,
+    "mitre_id": "T1110.004",
+    "evidence": {
+      "failed_logins": 689,
+      "successful_logins": 182,
+      "failure_ratio": 0.791,
+      "unique_user_agents": 1,
+      "bot_ua_used": false
+    },
+    "score": 3765,
+    "severity": "CRITICAL"
+  },
+  {
+    "attack_type": "sql_injection",
+    "ip": "91.199.12.77",
+    "start_time": "2026-03-22T10:30:00+00:00",
+    "end_time": "2026-03-22T10:32:08+00:00",
+    "duration_seconds": 128.0,
+    "request_count": 12,
+    "total_bytes": 77061,
+    "layer": "L1_burst",
+    "is_internal": false,
+    "mitre_id": "T1190",
+    "evidence": {
+      "payload_count": 12,
+      "successful_responses": 6,
+      "targeted_endpoints": {
+        "/api/accounts": 4,
+        "/api/search": 2,
+        "/api/report": 2,
+        "/api/users": 2,
+        "/api/profile": 1,
+        "/api/transfer": 1
+      },
+      "sample_payloads": [
+        "id=1%20OR%201=1",
+        "id=1%20UNION%20SELECT%20password%20FROM%20users",
+        "id=1%27%20OR%20%271%27=%271",
+        "q=test%27%20UNION%20SELECT%20card_no,cvv%20FROM%20cards--",
+        "acct=1001%20UNION%20SELECT%20name,balance%20FROM%20accounts"
+      ],
+      "user_agents": [
+        "sqlmap/1.7.2#stable"
+      ],
+      "uses_sqlmap": true
+    },
+    "score": 226,
+    "severity": "HIGH"
+  },
+  {
+    "attack_type": "data_exfiltration",
+    "ip": "103.44.55.66",
+    "start_time": "2026-03-30T02:15:00+00:00",
+    "end_time": "2026-03-30T02:28:47+00:00",
+    "duration_seconds": 827.0,
+    "request_count": 55,
+    "total_bytes": 215708209,
+    "layer": "L1_burst",
+    "is_internal": false,
+    "mitre_id": "T1041",
+    "evidence": {
+      "endpoints_targeted": {
+        "/api/transactions": 16,
+        "/api/users": 12,
+        "/api/report": 10,
+        "/api/export": 9,
+        "/api/accounts": 8
+      },
+      "max_single_response_bytes": 5451312,
+      "avg_response_bytes": 3921967,
+      "estimated_records": 421305
+    },
+    "score": 2230,
+    "severity": "CRITICAL"
+  },
+  {
+    "attack_type": "data_exfiltration",
+    "ip": "159.203.45.21",
+    "start_time": "2026-03-10T10:11:00+00:00",
+    "end_time": "2026-04-23T15:19:00+00:00",
+    "duration_seconds": 3820080.0,
+    "request_count": 360,
+    "total_bytes": 325201257,
+    "layer": "L2_session",
+    "is_internal": false,
+    "mitre_id": "T1041",
+    "evidence": {
+      "endpoints_targeted": {
+        "/api/transactions": 132,
+        "/api/accounts": 119,
+        "/api/users": 109
+      },
+      "max_single_response_bytes": 1099908,
+      "avg_response_bytes": 903336,
+      "estimated_records": 635158
+    },
+    "score": 3610,
+    "severity": "CRITICAL"
+  },
+  {
+    "attack_type": "data_exfiltration",
+    "ip": "185.220.101.42",
+    "start_time": "2026-04-09T03:19:00+00:00",
+    "end_time": "2026-04-17T05:58:00+00:00",
+    "duration_seconds": 700740.0,
+    "request_count": 38,
+    "total_bytes": 42249479,
+    "layer": "L3_long_term",
+    "is_internal": false,
+    "mitre_id": "T1041",
+    "evidence": {
+      "endpoints_targeted": {
+        "/api/users": 12,
+        "/api/transactions": 11,
+        "/api/accounts": 9,
+        "/api/export": 6
+      },
+      "max_single_response_bytes": 1487333,
+      "avg_response_bytes": 1111828,
+      "estimated_records": 82518
+    },
+    "score": 715,
+    "severity": "CRITICAL"
+  },
+  {
+    "attack_type": "anonymizer",
+    "ip": "103.44.55.66",
+    "start_time": "2026-03-30T02:15:00+00:00",
+    "end_time": "2026-03-30T02:28:47+00:00",
+    "duration_seconds": 827.0,
+    "request_count": 55,
+    "total_bytes": 215708209,
+    "layer": "L4_fingerprint",
+    "is_internal": false,
+    "mitre_id": "T1090",
+    "evidence": {
+      "signals": [
+        "bot_ua_ratio=100%(55)"
+      ],
+      "bot_ua_count": 55,
+      "bot_ratio": 1.0,
+      "tor_ua_count": 0,
+      "unique_user_agents": 1,
+      "interval_cv": 0.306,
+      "user_agents": {
+        "curl/8.0.1": 55
+      }
+    },
+    "score": 2230,
+    "severity": "CRITICAL"
+  },
+  {
+    "attack_type": "anonymizer",
+    "ip": "185.220.101.42",
+    "start_time": "2026-03-20T05:21:00+00:00",
+    "end_time": "2026-04-17T05:58:00+00:00",
+    "duration_seconds": 2421420.0,
+    "request_count": 86,
+    "total_bytes": 42272326,
+    "layer": "L4_fingerprint",
+    "is_internal": false,
+    "mitre_id": "T1090",
+    "evidence": {
+      "signals": [
+        "bot_ua_ratio=49%(42)"
+      ],
+      "bot_ua_count": 42,
+      "bot_ratio": 0.488,
+      "tor_ua_count": 0,
+      "unique_user_agents": 3,
+      "interval_cv": 1.489,
+      "user_agents": {
+        "Mozilla/5.0_(Windows_NT_10.0;_Win64;_x64)_AppleWebKit/537.36_Chrome/120.0": 44,
+        "python-requests/2.31.0": 38,
+        "PostmanRuntime/7.39.0": 4
+      }
+    },
+    "score": 715,
+    "severity": "CRITICAL"
+  },
+  {
+    "attack_type": "anonymizer",
+    "ip": "185.23.44.12",
+    "start_time": "2026-03-15T14:00:00+00:00",
+    "end_time": "2026-03-15T14:03:44+00:00",
+    "duration_seconds": 224.0,
+    "request_count": 50,
+    "total_bytes": 13539,
+    "layer": "L4_fingerprint",
+    "is_internal": false,
+    "mitre_id": "T1090",
+    "evidence": {
+      "signals": [
+        "bot_ua_ratio=100%(50)"
+      ],
+      "bot_ua_count": 50,
+      "bot_ratio": 1.0,
+      "tor_ua_count": 0,
+      "unique_user_agents": 1,
+      "interval_cv": 0.466,
+      "user_agents": {
+        "python-requests/2.31.0": 50
+      }
+    },
+    "score": 245,
+    "severity": "HIGH"
+  },
+  {
+    "attack_type": "admin_recon",
+    "ip": "176.88.14.201",
+    "start_time": "2026-04-12T23:30:00+00:00",
+    "end_time": "2026-04-12T23:31:12+00:00",
+    "duration_seconds": 72.0,
+    "request_count": 8,
+    "total_bytes": 13797,
+    "layer": "L2_session",
+    "is_internal": false,
+    "mitre_id": "T1087",
+    "evidence": {
+      "admin_endpoints_hit": {
+        "/admin": 2,
+        "/admin/users": 2,
+        "/admin/export": 2,
+        "/internal/audit": 1,
+        "/internal": 1
+      },
+      "deep_admin_hits": 6,
+      "successful_admin_access": 4,
+      "user_agents": [
+        "PostmanRuntime/7.39.0"
+      ]
+    },
+    "score": 292,
+    "severity": "HIGH"
+  },
+  {
+    "attack_type": "admin_recon",
+    "ip": "185.220.101.42",
+    "start_time": "2026-03-20T05:21:00+00:00",
+    "end_time": "2026-03-25T06:52:00+00:00",
+    "duration_seconds": 437460.0,
+    "request_count": 4,
+    "total_bytes": 7602,
+    "layer": "L2_session",
+    "is_internal": false,
+    "mitre_id": "T1087",
+    "evidence": {
+      "admin_endpoints_hit": {
+        "/admin": 2,
+        "/admin/export": 2
+      },
+      "deep_admin_hits": 2,
+      "successful_admin_access": 2,
+      "user_agents": [
+        "PostmanRuntime/7.39.0"
+      ]
+    },
+    "score": 715,
+    "severity": "CRITICAL"
+  }
+]
