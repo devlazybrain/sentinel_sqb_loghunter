@@ -26,9 +26,10 @@ class AttackSession:
     evidence: dict[str, Any] = field(default_factory=dict)
     score: int = 0                         # IP reputation balli
     severity: str = "LOW"                  # LOW/MEDIUM/HIGH/CRITICAL
-    # Enrichment maydonlari (GeoIP + Tor + distributed flags)
+    # Enrichment maydonlari (GeoIP + Tor + Proxy + distributed flags)
     country: str = "Unknown"
     via_tor: bool = False
+    via_proxy: bool = False
     ip_rotation_detected: bool = False
     coordinated: bool = False
     shared_user_agent: str | None = None

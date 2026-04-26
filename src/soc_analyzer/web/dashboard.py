@@ -145,6 +145,19 @@ def main():
 # ============================================================
 # TAB: HUJUMLAR — 2 ustun: jadval + IP detail panel
 # ============================================================
+from datetime import timezone, timedelta
+_TZ_TASHKENT = timezone(timedelta(hours=5))
+
+def _fmt_dt(dt, fmt="%Y-%m-%d %H:%M") -> str:
+    """UTC datetime'ni Toshkent vaqtiga (UTC+5) o'girib formatlaydi."""
+    if dt is None:
+        return "—"
+    try:
+        return dt.astimezone(_TZ_TASHKENT).strftime(fmt)
+    except Exception:
+        return str(dt)
+
+
 def _session_endpoints(session) -> str:
     """AttackSession evidence'dan hujum qilingan endpoint'larni qaytaradi."""
     ev = session.evidence or {}
@@ -233,7 +246,7 @@ def _render_attacks(result, df, lang):
         for s in sessions:
             action = ip_actions.get_action(s.ip.split(",")[0].strip())
             action_icon = {"watchlist": "👁", "ignore": "🔇", "block": "⛔"}.get(action or "", "")
-            tor_badge = "🧅" if s.via_tor else ""
+            anon_badge = "🧅 TOR" if s.via_tor else ("🔀 Proxy" if s.via_proxy else "")
             rot_badge = "🔄" if s.ip_rotation_detected else ""
             endpoints = _session_endpoints(s)
             payloads = _session_payloads(s)
@@ -243,10 +256,11 @@ def _render_attacks(result, df, lang):
                 t("col_attack_type", lang):  attack_type_label(s.attack_type, lang),
                 t("col_ip", lang):           f"{action_icon} {s.ip}".strip(),
                 "🌍":                         s.country,
-                "🧅 Tor":                     tor_badge,
+                "Anonymizer":                anon_badge,
                 "🔄":                         rot_badge,
                 t("col_internal", lang):     "✓" if s.is_internal else "",
-                t("col_start", lang):        s.start_time.strftime("%Y-%m-%d %H:%M"),
+                t("col_start", lang):        _fmt_dt(s.start_time),
+                t("col_end", lang):          _fmt_dt(s.end_time),
                 t("col_duration", lang):     format_duration(s.duration_seconds, lang),
                 t("col_requests", lang):     f"{s.request_count:,}",
                 "Endpoint":                  endpoints,
@@ -342,8 +356,8 @@ def _render_chains(result, lang):
                 stage = attack_type_label(step["stage"], lang)
                 ip_part = f" · `{step['ip']}`" if c.get("chain_type") == "multi_ip_campaign" else ""
                 st.markdown(
-                    f"{i}. **{stage}**{ip_part} — `{step['start']:%H:%M:%S}` → "
-                    f"`{step['end']:%H:%M:%S}` · "
+                    f"{i}. **{stage}**{ip_part} — `{_fmt_dt(step['start'], '%H:%M:%S')}` → "
+                    f"`{_fmt_dt(step['end'], '%H:%M:%S')}` · "
                     f"{format_duration(step['duration'], lang)} · "
                     f"{t('col_requests', lang)}: {step['requests']:,} · "
                     f"{t('col_bytes', lang)}: {format_bytes(step['bytes'])}"
@@ -592,19 +606,22 @@ def _render_ip_detail(ip: str, result, df, lang):
                  help=t("action_clear", lang)):
         ip_actions.clear_action(ip); st.rerun()
 
-    # === GeoIP + Tor badges ===
+    # === GeoIP + Anonymizer badges ===
     ip_sessions = [s for s in result.sessions if ip in s.ip.split(",")]
     if ip_sessions:
         primary_session = ip_sessions[0]
-        badge_cols = st.columns(3)
+        badge_cols = st.columns(4)
         country = primary_session.country
         if country and country != "Unknown":
             badge_cols[0].info(f"🌍 **{country}**")
         if primary_session.via_tor:
             badge_cols[1].error("🧅 **TOR EXIT NODE**")
+        elif primary_session.via_proxy:
+            badge_cols[1].warning("🔀 **PROXY**")
         if primary_session.ip_rotation_detected:
             badge_cols[2].warning("🔄 **IP ROTATION / VPN**")
         if primary_session.coordinated and primary_session.shared_user_agent:
+            badge_cols[3].error("🤝 **Koordinatsiyali**")
             st.warning(f"🤝 **Koordinatsiyali hujum** — ortaq UA: `{primary_session.shared_user_agent}`")
 
     g = df[df["ip"] == ip]
@@ -619,8 +636,8 @@ def _render_ip_detail(ip: str, result, df, lang):
     c3.metric(t("col_duration", lang), format_duration(span, lang))
 
     st.caption(
-        f"⏱ {t('first_request', lang)}: `{g['timestamp'].min():%Y-%m-%d %H:%M:%S}`  ·  "
-        f"{t('last_request', lang)}: `{g['timestamp'].max():%Y-%m-%d %H:%M:%S}`"
+        f"⏱ {t('first_request', lang)}: `{_fmt_dt(g['timestamp'].min(), '%Y-%m-%d %H:%M:%S')}`  ·  "
+        f"{t('last_request', lang)}: `{_fmt_dt(g['timestamp'].max(), '%Y-%m-%d %H:%M:%S')}` (UTC+5 Toshkent)"
     )
 
     # === Bu IP ning hujum sessiyalari ===
@@ -631,7 +648,7 @@ def _render_ip_detail(ip: str, result, df, lang):
             payloads = _session_payloads(s)
             label = (
                 f"**{attack_type_label(s.attack_type, lang)}** · "
-                f"`{s.start_time:%H:%M:%S}` → `{s.end_time:%H:%M:%S}` · "
+                f"`{_fmt_dt(s.start_time, '%H:%M:%S')}` → `{_fmt_dt(s.end_time, '%H:%M:%S')}` · "
                 f"{s.request_count:,} so'rov · **{s.total_bytes:,} bayt**"
             )
             with st.expander(label, expanded=True):
