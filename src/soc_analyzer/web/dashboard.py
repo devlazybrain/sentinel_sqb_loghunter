@@ -8,6 +8,9 @@ from __future__ import annotations
 import sys
 import io
 import json
+import os
+import subprocess
+import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -83,9 +86,87 @@ def main():
         uploaded = st.file_uploader(t("upload_log", lang), type=["txt", "log"])
         use_default = st.checkbox(t("use_default", lang), value=False)
 
+        # ====== LIVE MONITOR ======
+        st.markdown("---")
+        st.markdown("### 🔴 Live Monitor")
+        _live_mode = st.session_state.get("_live_mode", False)
+        if _live_mode:
+            st.success("● Aktiv", icon="🟢")
+
+        _live_src_map = {
+            "default":  ROOT / "data" / "keyes1_nginx_access (1).log",
+            "uploaded": ROOT / "data" / "input" / "_uploaded.txt",
+        }
+        _live_src = st.selectbox(
+            "Manba / Source",
+            options=list(_live_src_map.keys()),
+            format_func=lambda k: "📄 Default log" if k == "default" else "📤 Uploaded log",
+            key="live_src_key",
+        )
+        _live_interval = st.slider("Refresh (s)", 1, 30, 5, key="live_interval_s")
+        _live_speed = st.slider("Speed (ms/line)", 10, 1000, 50, key="live_delay_ms")
+
+        _lc1, _lc2 = st.columns(2)
+        if _lc1.button("▶ Start", disabled=_live_mode, use_container_width=True, key="live_start"):
+            _src_path = _live_src_map[_live_src]
+            if not _src_path.exists():
+                st.error(f"Fayl topilmadi: {_src_path.name}")
+            else:
+                # kill existing subprocess
+                _old_proc = st.session_state.pop("_live_proc", None)
+                if _old_proc:
+                    try: _old_proc.kill()
+                    except Exception: pass
+                _old_fout = st.session_state.pop("_live_fout", None)
+                if _old_fout:
+                    try: _old_fout.close()
+                    except Exception: pass
+                _live_log = ROOT / "data" / "input" / "_live.txt"
+                _live_log.write_text("")  # truncate
+                # Count source lines so we can detect when streaming is done
+                try:
+                    with open(str(_src_path), encoding="utf-8", errors="replace") as _sf:
+                        st.session_state["_live_total_lines"] = sum(1 for _ in _sf)
+                except Exception:
+                    st.session_state["_live_total_lines"] = 0
+                _fout = open(str(_live_log), "a", encoding="utf-8", errors="replace")
+                _proc = subprocess.Popen(
+                    [sys.executable,
+                     str(ROOT / "scripts" / "log_streamer.py"),
+                     str(_src_path),
+                     "--delay", str(_live_speed / 1000)],
+                    stdout=_fout,
+                    stderr=subprocess.DEVNULL,
+                    env={**os.environ, "PYTHONIOENCODING": "utf-8"},
+                )
+                st.session_state["_live_proc"] = _proc
+                st.session_state["_live_fout"] = _fout
+                st.session_state["_live_mode"] = True
+                st.session_state["_log_source"] = "live"
+                st.session_state.pop("_cached_df", None)
+                st.session_state.pop("_cached_result", None)
+                # Reset filters so defaults apply cleanly on first live render
+                for _fk in ("flt_type", "flt_sev", "flt_dur", "flt_int", "flt_anon",
+                             "_panel_ip", "attacks_table"):
+                    st.session_state.pop(_fk, None)
+                st.rerun()
+
+        if _lc2.button("⏹ Stop", disabled=not _live_mode, use_container_width=True, key="live_stop"):
+            _proc = st.session_state.pop("_live_proc", None)
+            if _proc:
+                try: _proc.kill()
+                except Exception: pass
+            _fout = st.session_state.pop("_live_fout", None)
+            if _fout:
+                try: _fout.close()
+                except Exception: pass
+            st.session_state["_live_mode"] = False
+            st.session_state.pop("_log_source", None)
+            st.rerun()
+
     # ====== HEADER ======
     st.title("🛡 " + t("app_title", lang))
-    st.caption(t("app_subtitle", lang))
+    _live_badge_slot = st.empty()  # filled after log_path is resolved
 
     # ====== LOG FAYLNI YUKLASH ======
     # Track log source in session_state so language/theme changes don't reset the app
@@ -113,15 +194,55 @@ def main():
     if log_source == "uploaded":
         log_path = ROOT / "data" / "input" / "_uploaded.txt"
     elif log_source == "default":
-        log_path = ROOT / "data" / "input" / "web_attack_logs.txt"
+        log_path = ROOT / "data" / "keyes1_nginx_access (1).log"
         if not log_path.exists():
             st.error(t("default_not_found", lang) + f": {log_path}")
             st.stop()
+    elif log_source == "live":
+        log_path = ROOT / "data" / "input" / "_live.txt"
+        if not log_path.exists():
+            log_path.write_text("")
     else:
         st.info(t("upload_or_default", lang))
         st.stop()
 
-    if "_cached_result" not in st.session_state:
+    # Fill the header badge slot now that log_path is resolved
+    if st.session_state.get("_live_mode"):
+        _live_line_count = 0
+        try:
+            with open(log_path, encoding="utf-8", errors="replace") as _lf:
+                _live_line_count = sum(1 for _ in _lf)
+        except Exception:
+            pass
+        _live_badge_slot.markdown(
+            f"<span style='background:#ef4444;color:white;padding:4px 12px;"
+            f"border-radius:20px;font-weight:700;font-size:13px;'>● LIVE</span>"
+            f"&nbsp;&nbsp;<span style='color:#888;font-size:13px;'>{_live_line_count:,} qator · "
+            f"har {st.session_state.get('live_interval_s', 5)}s yangilanadi</span>",
+            unsafe_allow_html=True,
+        )
+    else:
+        _live_badge_slot.caption(t("app_subtitle", lang))
+
+    if st.session_state.get("_live_mode"):
+        # Live mode — always re-parse, no cache
+        try:
+            df = parse_log(log_path)
+            result = AnalysisEngine().analyze(df) if not df.empty else None
+        except Exception:
+            df = pd.DataFrame()
+            result = None
+        if result is None or df.empty:
+            _line_count = 0
+            try:
+                with open(log_path, encoding="utf-8", errors="replace") as _f:
+                    _line_count = sum(1 for _ in _f)
+            except Exception:
+                pass
+            st.info(f"⏳ Live ma'lumot kutilmoqda... ({_line_count} qator o'qildi)")
+            time.sleep(2)
+            st.rerun()
+    elif "_cached_result" not in st.session_state:
         with st.spinner(t("analyzing", lang)):
             df = parse_log(log_path)
             result = AnalysisEngine().analyze(df)
@@ -132,8 +253,9 @@ def main():
         result = st.session_state["_cached_result"]
 
     # ====== TOP METRIKALAR ======
+    # Exclude anonymizer sessions — they share the same IP/bytes as real attack sessions
     total_exfil_bytes = sum(s.total_bytes for s in result.sessions
-                            if s.attack_type == "data_exfiltration")
+                            if s.attack_type != "anonymizer")
     estimated_records = result.damage.get("estimated_records", 0)
 
     c1, c2, c3, c4, c5 = st.columns(5)
@@ -167,6 +289,38 @@ def main():
 
     st.markdown("---")
     st.caption(t("footer", lang))
+
+    # Live mode auto-refresh — runs after all content is rendered
+    if st.session_state.get("_live_mode"):
+        # Check stop conditions: proc exited OR live file has caught up to source
+        _proc = st.session_state.get("_live_proc")
+        _proc_done = _proc is not None and _proc.poll() is not None
+
+        _total_lines = st.session_state.get("_live_total_lines", 0)
+        _current_lines = 0
+        try:
+            with open(log_path, encoding="utf-8", errors="replace") as _cf:
+                _current_lines = sum(1 for _ in _cf)
+        except Exception:
+            pass
+        _lines_done = _total_lines > 0 and _current_lines >= _total_lines
+
+        if _proc_done or _lines_done:
+            _fout = st.session_state.pop("_live_fout", None)
+            if _fout:
+                try: _fout.close()
+                except Exception: pass
+            _p = st.session_state.pop("_live_proc", None)
+            if _p:
+                try: _p.kill()
+                except Exception: pass
+            st.session_state.pop("_live_total_lines", None)
+            st.session_state["_live_mode"] = False
+            st.toast("✅ Live stream tugadi — barcha qatorlar o'qildi", icon="🏁")
+            st.rerun()
+        else:
+            time.sleep(st.session_state.get("live_interval_s", 5))
+            st.rerun()
 
 
 # ============================================================
@@ -220,6 +374,12 @@ def _render_attacks(result, df, lang, theme="dark"):
     f1, f2, f3, f4 = st.columns(4)
     with f1:
         all_severities = ["CRITICAL", "HIGH", "MEDIUM", "LOW"]
+        # Live mode: auto-include any new severities
+        if st.session_state.get("_live_mode"):
+            _saved_sev = st.session_state.get("flt_sev", [])
+            _new_sev = [_sv for _sv in all_severities if _sv not in _saved_sev]
+            if _new_sev:
+                st.session_state["flt_sev"] = _saved_sev + _new_sev
         sev_filter = st.multiselect(
             t("filter_severity", lang),
             options=all_severities,
@@ -228,7 +388,15 @@ def _render_attacks(result, df, lang, theme="dark"):
             key="flt_sev",
         )
     with f2:
-        all_types = sorted({s.attack_type for s in result.sessions})
+        # Anonymizer has its own toggle — keep it out of the main type filter
+        all_types = sorted({s.attack_type for s in result.sessions
+                            if s.attack_type != "anonymizer"})
+        # Live mode: auto-include any newly detected types so they aren't filtered out
+        if st.session_state.get("_live_mode"):
+            _saved = st.session_state.get("flt_type", [])
+            _new = [_tp for _tp in all_types if _tp not in _saved]
+            if _new:
+                st.session_state["flt_type"] = _saved + _new
         type_filter = st.multiselect(
             t("filter_attack_type", lang),
             options=all_types,
@@ -246,9 +414,12 @@ def _render_attacks(result, df, lang, theme="dark"):
         )
     with f4:
         show_internal = st.checkbox(t("show_internal", lang), value=True, key="flt_int")
+        show_anonymizer = st.checkbox("🧅 Anonymizer/Proxy qatorlar", value=False, key="flt_anon")
 
     # ===== APPLY FILTERS =====
     sessions = result.sessions
+    if not show_anonymizer:
+        sessions = [s for s in sessions if s.attack_type != "anonymizer"]
     sessions = [s for s in sessions if s.severity in sev_filter]
     sessions = [s for s in sessions if s.attack_type in type_filter]
     if dur_choice == "short":
