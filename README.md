@@ -1,86 +1,161 @@
-# sentinel_sqb_loghunter — SQB Mobile Internet-Banking Cyberattack Analyzer
+# SQB SOC — Mobile Internet-Banking Kiberhujum Analitikasi
 
-Log analyzer (Nginx and Backend) for SQB bank for cyber attacks.
+Nginx veb-server loglarini tahlil qilib, koordinatsiyalangan ko'p bosqichli kiberhujumlarni avtomatik aniqlaydi va real vaqtda Streamlit dashboard orqali ko'rsatadi.
 
-Nginx + backend log fayllarni tahlil qilib, **3 ta asosiy hujum** turini avtomatik aniqlovchi va hisobot yaratuvchi tizim:
+---
 
-1. **Credential Stuffing** — leaked credentials bilan login urinishlari
-2. **SQL Injection** — API'lar orqali zararli so'rovlar
-3. **Data Exfiltration** — API orqali ommaviy ma'lumot o'g'irlash
+## Aniqlash imkoniyatlari
 
-Bonus aniqlash: **Anonymizer/Proxy**, **Admin Recon**, **Distributed Fingerprint** (botnet), **Attack Chains** (ko'p bosqichli hujum).
+### Asosiy hujum turlari
+| Hujum turi | Aniqlash mantiqi |
+|---|---|
+| **Credential Stuffing** | 4-qatlamli aniqlash — burst, session, low-and-slow, bot UA |
+| **SQL Injection** | URL parametrlarida zararli payload'lar, sqlmap fingerprint |
+| **Data Exfiltration** | API orqali ommaviy ma'lumot tortib olish — bayt hajmi va endpoint tahlili |
+
+### Qo'shimcha detektorlar
+| Detektor | Nima topadi |
+|---|---|
+| **Anonymizer / Proxy** | TOR exit node, proxy, bot UA rotatsiyasi |
+| **Admin Recon** | `/admin`, `/internal` endpointlarga maxfiy razvedka |
+| **Distributed Fingerprint** | Turli IP'lardan bir xil UA — botnet/kampaniya |
+| **Distributed Credential Stuffing** | Koordinatsiyalangan ko'p IP login hujumi |
+
+---
+
+## 4-Qatlamli Deteksiya Arxitekturasi
+
+| Qatlam | Vaqt oralig'i | Nima topadi |
+|---|---|---|
+| **L1 — Burst** | 3 soat | Tez, agressiv hujum — login burst, sqlmap |
+| **L2 — Session** | 1 kun | O'rta tezlikda anomal xulq |
+| **L3 — Behavioral** | 7–30 kun | APT, low-and-slow uzoq muddatli hujumchi |
+| **L4 — Fingerprint** | Butun davr | Distributed attacker — bir xil imzo, ko'p IP |
+
+Bir IP bir necha qatlamda flag olishi mumkin. **2+ qatlam = yuqori ishonch darajasi.**
+
+---
+
+## Attack Chain Aniqlash
+
+Ikki xil zanjir turi aniqlanadi:
+
+**1. Single-IP Chain** — bitta IP ketma-ket 2+ xil hujum turi bajarsa:
+```
+185.220.101.47: Credential Stuffing → Anonymizer
+```
+
+**2. Multi-IP Campaign** — turli IP'lar koordinatsiyali, har bosqich oldingi bosqich tugagandan 3 soat ichida boshlanadi:
+```
+185.220.101.47 (Germany, TOR)  → Credential Stuffing  09:47–09:53
+45.142.212.100  (Moldova)       → SQL Injection        10:15–10:19
+194.165.16.8    (Monaco)        → Data Exfiltration    11:02–11:32  →  59.1 MB o'g'irlangan
+```
+
+**CRITICAL COMBO** — quyidagi kombinatsiyalar eng xavfli deb belgilanadi:
+- SQL Injection + Data Exfiltration
+- Credential Stuffing + Data Exfiltration
+- Admin Recon + Data Exfiltration
+
+---
+
+## Har bir hujum sessiyasi uchun ko'rsatkichlar
+
+| Ko'rsatkich | Model maydoni |
+|---|---|
+| Hujum boshlanish vaqti | `start_time` |
+| Hujum tugash vaqti | `end_time` |
+| Hujum davomiyligi | `duration_seconds` |
+| Hujumchi so'rovlari soni | `request_count` |
+| Ko'chirilgan ma'lumot hajmi | `total_bytes` |
+| Hujumchi mamlakati | `country` (GeoIP) |
+| TOR / Proxy | `via_tor`, `via_proxy` |
+| Og'irlik balli | `score` |
+| Darajasi | `severity` — LOW / MEDIUM / HIGH / CRITICAL |
+| MITRE ATT&CK ID | `mitre_id` |
+
+---
 
 ## Ishga tushirish
 
 ```bash
-# 1. Paketlarni o'rnatish
+# 1. Bog'liqliklarni o'rnatish
 pip install -r requirements.txt
 
-# 2. CLI tahlil
-python scripts/run_analysis.py
-# yoki o'z log faylingiz bilan:
-python scripts/run_analysis.py path/to/your.log
-
-# 3. Web dashboard (Streamlit)
+# 2. Dashboard ishga tushirish
 python scripts/run_dashboard.py
 # yoki to'g'ridan-to'g'ri:
 streamlit run src/soc_analyzer/web/dashboard.py
-
-# 4. API (FastAPI — production deployment uchun)
-uvicorn soc_analyzer.api.app:app --port 8000
 ```
 
-Hisobotlar `data/output/` papkasiga yoziladi: `attacks.csv`, `attacks.json`, `attack_chains.json`, `economic_damage.json`, `ip_reputation.csv`.
+Dashboard `http://localhost:8501` da ochiladi.
 
-## Detection arxitekturasi — 4 LAYER
+---
 
-| Layer | Vaqt darchasi | Nima topadi |
-|-------|---|---|
-| **L1 — Burst** | 3 soat | Tez, agressiv hujum (sqlmap, login burst) |
-| **L2 — Session** | 1 kun | O'rta tezlikda anomal xulq |
-| **L3 — Behavioral** | 7-30 kun | APT, low-and-slow uzoq muddatli hujumchi |
-| **L4 — Fingerprint** | butun davr | Distributed attacker (bir xil imzo, ko'p IP) |
+## Dashboard imkoniyatlari
 
-Har bir IP bir necha layer'da flag bo'lishi mumkin. **2+ layer = HIGH confidence**.
+- **Log yuklash** — o'z log faylingizni yuklang yoki standart faylni ishlating
+- **Live Monitor** — `log_streamer.py` orqali log faylni real vaqtda oqitib, har N soniyada tahlilni yangilaydi; fayl tugaganda avtomatik to'xtaydi
+- **Hujumlar jadvali** — daraja, hujum turi, davomiylik, payload bo'yicha filtrlash; CSV / JSON eksport
+- **IP Detail Panel** — jadvalda IP'ga bosing → o'ng tomonda to'liq ma'lumot: mamlakat, TOR/proxy, barcha sessiyalar, MITRE, oddiy foydalanuvchi bilan taqqoslash
+- **Zanjirlar** — ko'p bosqichli hujumlar xronologik tartibda, CRITICAL COMBO belgisi
+- **IP Reytingi** — kumulyativ reputation balli bo'yicha barcha hujumchi IP'lar
+- **Grafiklar** — Gantt timeline, soatlik faollik, top IP'lar
+- **Statistika** — oddiy foydalanuvchi vs hujumchi profili taqqoslash
+- **Boshqaruv** — IP'larni Watchlist / Ignore / Block ro'yxatiga qo'shish
+- **Endpoints** — login, exfiltration, sensitive endpointlarni sozlash
+- **3 til** — O'zbek, Русский, English
+- **Mavzu** — Dark / Light
 
-## Loyiha strukturasi
+---
+
+## Loyiha tuzilmasi
 
 ```
-sentinel_sqb_loghunter/
+sqb-soc/
 ├── data/
-│   ├── input/           # log fayllar
-│   └── output/          # generatsiya qilingan hisobotlar
+│   ├── input/                  # log fayllar
+│   ├── output/                 # hisobotlar (CSV, JSON)
+│   ├── GeoLite2-Country.mmdb   # offline GeoIP bazasi
+│   ├── torbulkexitlist.txt     # TOR exit node ro'yxati
+│   └── http_proxies.txt        # proxy ro'yxati
 ├── scripts/
-│   ├── run_analysis.py  # CLI giriş
-│   └── run_dashboard.py # Streamlit launcher
-├── src/soc_analyzer/
-│   ├── config/          # threshold, regex, endpoint, scoring, economics
-│   ├── core/            # parser, models (AttackSession, IpReputation)
-│   ├── detectors/       # 6 ta detector + base class
-│   ├── analysis/        # engine, reputation, attack_chain, economics
-│   ├── reporting/       # CSV/JSON exporters
-│   ├── web/             # Streamlit dashboard
-│   ├── api/             # FastAPI REST API
-│   └── utils/           # ip_utils, stats
-└── tests/               # smoke tests
+│   ├── run_dashboard.py        # Streamlit launcher
+│   ├── log_streamer.py         # live log replay vositasi
+│   └── generate_sample_log.py  # test log generator
+└── src/soc_analyzer/
+    ├── config/                 # threshold, regex, endpoint, scoring
+    ├── core/                   # parser, models (AttackSession, IpReputation)
+    ├── detectors/              # 7 ta detektor
+    ├── analysis/               # engine, reputation, attack_chain, economics
+    ├── web/                    # Streamlit dashboard, theme
+    └── utils/                  # formatters, ip_utils
 ```
 
-## TZ talablariga moslik
+---
 
-| Talab | Bajarilgan |
-|---|---|
-| Hujum boshlanish vaqti | ✅ `start_time` |
-| Hujum tugash vaqti | ✅ `end_time` |
-| Hujum davomiyligi | ✅ `duration_seconds` |
-| So'rovlar soni | ✅ `request_count` |
-| Ko'chirilgan ma'lumot (bytes) | ✅ `total_bytes` |
-| Detection rules / SOC thinking | ✅ 4-layer + IP reputation + 11 ta xulq signali |
-| Attack Chain | ✅ Ko'p bosqichli hujum aniqlash + critical combo flagging |
+## Live Monitor ishlash prinsipi
 
-## Baholash mezonlariga moslik
+```
+log_streamer.py  →  _live.txt (o'sib boruvchi fayl)
+                         ↓
+              Dashboard har N soniyada o'qiydi
+                         ↓
+              parse_log → AnalysisEngine → UI yangilanadi
+                         ↓
+              Fayl tugagach → avtomatik to'xtaydi
+```
 
-- **Hujumlarni detektsiya (30 ball):** 6 ta detector, 4 layer
-- **Hujum tahlili (20 ball):** 5 majburiy ko'rsatkich + 8 qo'shimcha
-- **Attack Chain (20 ball):** Vaqt tartibida zanjirlash, critical combo bayrog'i
-- **Detection Rules / SOC thinking (15 ball):** Multi-layer, IP reputation, fingerprint, low-and-slow
-- **Yechim sifati (15 ball):** Modulli arxitektura, test'lar, CLI+Web+API
+`Speed (ms/line)` — qanchalik tez oqishi; `Refresh (s)` — qanchalik tez yangilanishi.
+
+---
+
+## Talablar
+
+```
+Python >= 3.10
+pandas >= 2.2.0
+streamlit >= 1.32.0
+plotly >= 5.20.0
+geoip2 >= 4.8
+```
